@@ -2,10 +2,13 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/base_de_datos", {});
-    console.log("MongoDB connected");
+    await mongoose.connect("mongodb://backend_user:backend2024@127.0.0.1:27017/pyme_glambarber", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Conectado a MongoDB correctamente");
   } catch (err) {
-    console.error(err.message);
+    console.error("Error al conectar a MongoDB:", err.message);
     process.exit(1);
   }
 };
