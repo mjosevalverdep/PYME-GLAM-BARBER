@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Servicios</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Catálogo de Servicios</h1>
+    </header>
+
+    <section id="services-catalog">
+        <h2>Servicios Disponibles</h2>
+        <div id="services-list"></div>
+    </section>
+
+    <section id="admin-panel">
+        <h2>Panel de Administración</h2>
+        <button id="add-service-button">Agregar Servicio</button>
+        <div id="admin-services-list"></div>
+    </section>
+
+    <!-- Modal para agregar nuevo servicio -->
+    <div id="add-service-modal" class="modal">
+        <div class="modal-content">
+            <h3>Agregar Servicio</h3>
+            <label for="service-name">Nombre:</label>
+            <input type="text" id="service-name" required>
+            <label for="service-category">Categoría:</label>
+            <input type="text" id="service-category" required>
+            <label for="service-price">Precio:</label>
+            <input type="number" id="service-price" required>
+            <button id="save-service">Guardar Servicio</button>
+            <button id="close-modal">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="services.js"></script>
+</body>
+</html>
