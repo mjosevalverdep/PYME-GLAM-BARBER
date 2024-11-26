@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api/services';
+const API_URL = 'http://localhost:9000/api/services';
 
 // Obtener todos los servicios
 export const getServices = async () => {
