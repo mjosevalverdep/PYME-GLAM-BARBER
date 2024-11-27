@@ -77,15 +77,3 @@ exports.searchServices = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// Obtener estadísticas de servicios por categoría
-exports.getServiceStats = async (req, res) => {
-  try {
-    const stats = await Service.aggregate([
-      { $group: { _id: '$category', count: { $sum: 1 } } },
-    ]);
-    res.status(200).json(stats);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};

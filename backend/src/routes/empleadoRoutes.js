@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/', empleadoController.crearEmpleado);
 router.get('/', empleadoController.obtenerEmpleados);
-router.put('/:id', empleadoController.actualizarEmpleado);
+router.put('/editar/:id', empleadoController.actualizarEmpleado);
 router.delete('/:id', empleadoController.eliminarEmpleado);
 router.get('/correo/:correo', empleadoController.buscarPorCorreo);
 router.get('/telefono/:telefono', empleadoController.buscarPorTelefono);

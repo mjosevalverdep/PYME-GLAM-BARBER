@@ -45,13 +45,6 @@ export const searchServices = async (query: string) => {
   return response.json();
 };
 
-// Obtener estadísticas de servicios
-export const getServiceStats = async () => {
-  const response = await fetch(`${API_URL}/stats`);
-  if (!response.ok) throw new Error('Error al obtener estadísticas de servicios');
-  return response.json();
-};
-
 // Obtener un servicio por ID
 export const getServiceById = async (id: string) => {
   const response = await fetch(`${API_URL}/${id}`);

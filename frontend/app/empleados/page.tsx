@@ -10,12 +10,11 @@ import {
   searchEmpleadoByCorreo,
   searchEmpleadoByTelefono,
   searchEmpleadoByPuesto,
-  getTotalEmpleados,
 } from "@/services/empleadoApi";
 import EmployeeCard from "@/components/empleados/EmployeeCard";
-import SearchBar from "@/components/empleados/SearchBar";
 import AddButton from "@/components/empleados/AddButton";
 import EmployeeModal from "@/components/empleados/EmployeeModal";
+import SearchModal from "@/components/empleados/SearchModal";
 
 interface Employee {
   id: string;
@@ -28,8 +27,9 @@ interface Employee {
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [stats, setStats] = useState<any>(null);
+  const [searchType, setSearchType] = useState<"nombre" | "correo" | "telefono" | "puesto" | null>(
+    null
+  );
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   useEffect(() => {
@@ -52,54 +52,26 @@ export default function EmployeesPage() {
     }
   };
 
-  const handleCreateEmployee = async (employee: {
-    nombre: string;
-    puesto: string;
-    correo: string;
-    telefono: string;
-  }) => {
+  const handleSearch = async (query: string) => {
     try {
-      await createEmpleado(employee);
-      setShowForm(false);
-      fetchEmployees();
-      toast.success("Empleado creado correctamente.");
-    } catch (error) {
-      toast.error("Error al crear el empleado.");
-    }
-  };
+      let data;
 
-  const handleDeleteEmployee = async (id: string) => {
-    try {
-      await deleteEmpleado(id);
-      fetchEmployees();
-      toast.success("Empleado eliminado correctamente.");
-    } catch (error) {
-      toast.error("Error al eliminar el empleado.");
-    }
-  };
-
-  const handleSearch = async () => {
-    try {
-      if (searchQuery.trim() !== "") {
-        if (searchQuery.includes("@")) {
-          const data = await searchEmpleadoByCorreo(searchQuery);
-          setEmployees(data);
-          toast.info(`Buscando por correo: ${searchQuery}`);
-        } else if (searchQuery.length === 10 && !isNaN(Number(searchQuery))) {
-          const data = await searchEmpleadoByTelefono(searchQuery);
-          setEmployees(data);
-          toast.info(`Buscando por teléfono: ${searchQuery}`);
-        } else if (searchQuery.trim().length > 0) {
-          const data = await searchEmpleadoByNombre(searchQuery);
-          setEmployees(data);
-          toast.info(`Buscando por nombre: ${searchQuery}`);
-        }
-      } else {
-        fetchEmployees();
-        toast.info("Mostrando todos los empleados.");
+      if (searchType === "correo") {
+        data = await searchEmpleadoByCorreo(query);
+      } else if (searchType === "telefono") {
+        data = await searchEmpleadoByTelefono(query);
+      } else if (searchType === "puesto") {
+        data = await searchEmpleadoByPuesto(query);
+      } else if (searchType === "nombre") {
+        data = await searchEmpleadoByNombre(query);
       }
+
+      setEmployees(Array.isArray(data) ? data : [data]);
+      toast.info(`Resultados para ${searchType}: ${query}`);
     } catch (error) {
       toast.error("Error al buscar empleados.");
+    } finally {
+      setSearchType(null); 
     }
   };
 
@@ -110,13 +82,31 @@ export default function EmployeesPage() {
           Gestión de Empleados
         </h1>
 
-        <SearchBar
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onSearch={handleSearch}
-        />
-
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center gap-4 mb-6">
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded"
+            onClick={() => setSearchType("nombre")}
+          >
+            Buscar por Nombre
+          </button>
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded"
+            onClick={() => setSearchType("correo")}
+          >
+            Buscar por Correo
+          </button>
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded"
+            onClick={() => setSearchType("telefono")}
+          >
+            Buscar por Teléfono
+          </button>
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded"
+            onClick={() => setSearchType("puesto")}
+          >
+            Buscar por Puesto
+          </button>
           <AddButton onClick={() => setShowForm(!showForm)} isOpen={showForm} />
         </div>
 
@@ -125,9 +115,21 @@ export default function EmployeesPage() {
             <EmployeeModal
               employee={editingEmployee}
               onClose={() => setEditingEmployee(null)}
-              onSave={handleCreateEmployee}
+              onSave={(newEmployee) => {
+                fetchEmployees();
+                setShowForm(false);
+                toast.success("Empleado creado correctamente.");
+              }}
             />
           </div>
+        )}
+
+        {searchType && (
+          <SearchModal
+            type={searchType}
+            onClose={() => setSearchType(null)}
+            onSearch={handleSearch}
+          />
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -136,21 +138,14 @@ export default function EmployeesPage() {
               key={employee.id}
               employee={employee}
               onEdit={() => setEditingEmployee(employee)}
-              onDelete={() => handleDeleteEmployee(employee.id)}
+              onDelete={() => {
+                deleteEmpleado(employee.id);
+                fetchEmployees();
+                toast.success("Empleado eliminado correctamente.");
+              }}
             />
           ))}
         </div>
-
-        {editingEmployee && (
-          <EmployeeModal
-            employee={editingEmployee}
-            onClose={() => setEditingEmployee(null)}
-            onSave={() => {
-              fetchEmployees();
-              setEditingEmployee(null);
-            }}
-          />
-        )}
       </div>
     </div>
   );

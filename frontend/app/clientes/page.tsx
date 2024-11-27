@@ -7,12 +7,11 @@ import {
   createCliente,
   deleteCliente,
   searchClienteByNombre,
-  getTotalClientes,
 } from "@/services/clienteApi";
 import ClientCard from "@/components/clientes/ClientCard";
-import SearchBar from "@/components/clientes/SearchBar";
 import AddButton from "@/components/clientes/AddButton";
 import ClientModal from "@/components/clientes/ClientModal";
+import SearchModal from "@/components/clientes/SearchModal";
 
 interface Client {
   id: string;
@@ -25,8 +24,7 @@ interface Client {
 export default function ClientesPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [stats, setStats] = useState<any>(null);
+  const [searchType, setSearchType] = useState<"nombre" | null>(null);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
 
   useEffect(() => {
@@ -46,6 +44,23 @@ export default function ClientesPage() {
       setClients(formattedData);
     } catch (error) {
       toast.error("Error al obtener los clientes.");
+    }
+  };
+
+  const handleSearch = async (query: string) => {
+    try {
+      let data;
+
+      if (searchType === "nombre") {
+        data = await searchClienteByNombre(query);
+        toast.info(`Resultados para búsqueda por nombre: ${query}`);
+      }
+
+      setClients(data);
+    } catch (error) {
+      toast.error("Error al buscar clientes.");
+    } finally {
+      setSearchType(null); 
     }
   };
 
@@ -75,16 +90,6 @@ export default function ClientesPage() {
     }
   };
 
-  const handleSearch = async () => {
-    try {
-      const data = await searchClienteByNombre(searchQuery);
-      setClients(data);
-      toast.info("Búsqueda completada.");
-    } catch (error) {
-      toast.error("Error al buscar clientes.");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="container mx-auto">
@@ -92,14 +97,20 @@ export default function ClientesPage() {
           Gestión de Clientes
         </h1>
 
-        <SearchBar
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onSearch={handleSearch}
-        />
-
-        <div className="flex justify-center mb-6">
-          <AddButton onClick={() => setShowModal(true)} isOpen={showModal} />
+        <div className="flex justify-center gap-4 mb-6">
+          <button
+            className="bg-gray-800 text-white px-4 py-2 rounded"
+            onClick={() => setSearchType("nombre")}
+          >
+            Buscar por Nombre
+          </button>
+          <AddButton
+            onClick={() => {
+              setEditingClient(null);
+              setShowModal(true);
+            }}
+            isOpen={showModal}
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -112,28 +123,25 @@ export default function ClientesPage() {
             />
           ))}
         </div>
-
-        {showModal && (
-          <ClientModal
-            client={null}
-            onClose={() => setShowModal(false)}
-            onSave={(newClient) => {
-              handleCreateClient(newClient);
-            }}
-          />
-        )}
-
-        {editingClient && (
-          <ClientModal
-            client={editingClient}
-            onClose={() => setEditingClient(null)}
-            onSave={(updatedClient) => {
-              fetchClients();
-              setEditingClient(null);
-            }}
-          />
-        )}
       </div>
+
+      {showModal && (
+        <ClientModal
+          client={editingClient}
+          onClose={() => setShowModal(false)}
+          onSave={(newClient) => {
+            handleCreateClient(newClient);
+          }}
+        />
+      )}
+
+      {searchType && (
+        <SearchModal
+          type={searchType}
+          onClose={() => setSearchType(null)}
+          onSearch={handleSearch}
+        />
+      )}
     </div>
   );
 }
