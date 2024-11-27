@@ -9,10 +9,10 @@ const notificationRoutes = require('./src/routes/notificationRoutes');
 const feedbackRoutes = require('./src/routes/feedbackRoutes');
 const inventarioRoutes = require('./src/routes/inventarioRoutes');
 const pagoRoutes = require('./src/routes/pagoRoutes');
-const promocionRoutes = require('./src/routes/promocionRoutes');
+const promocionRoutes = require('./src/routes/promocionesRoutes');
 const historialRoutes = require('./src/routes/historialRoutes');
-const suscripcionRoutes = require('./src/routes/suscripcionRoutes');
-const encuestaRoutes = require('./src/routes/encuestaRoutes');
+const suscripcionRoutes = require('./src/routes/suscripcionesRoutes');
+const encuestaRoutes = require('./src/routes/encuentasRoutes');
 
 const app = express(); 
 
