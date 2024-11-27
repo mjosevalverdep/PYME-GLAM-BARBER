@@ -6,30 +6,25 @@ import {
   getCitas,
   createCita,
   deleteCita,
-  getCitaById,
 } from "@/services/citaApi";
 import CitaCard from "@/components/citas/CitaCard";
-import SearchBar from "@/components/citas/SearchBar";
 import AddButton from "@/components/citas/AddButton";
 import CitaModal from "@/components/citas/CitaModal";
 
 interface Cita {
-    id: string;
-    cliente: {
-      nombre: string;
-    };
-    servicio: {
-      nombre: string;
-    };
-    fecha: string;
-    estado: string;
-    notas?: string;
-  }
+  id: string;
+  clienteId: string;
+  servicioId: string;
+  cliente: string;
+  servicio: string;
+  fecha: string;
+  estado: string;
+  notas?: string;
+}
 
 export default function CitasPage() {
   const [citas, setCitas] = useState<Cita[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [editingCita, setEditingCita] = useState<Cita | null>(null);
 
   useEffect(() => {
@@ -41,12 +36,10 @@ export default function CitasPage() {
       const data = await getCitas();
       const formattedData = data.map((cita: any) => ({
         id: cita._id,
-        cliente: {
-          nombre: cita.clienteId.nombre,
-        },
-        servicio: {
-          nombre: cita.servicioId.nombre,
-        },
+        clienteId: cita.clienteId?._id || "",
+        servicioId: cita.servicioId?._id || "",
+        cliente: cita.clienteId?.nombre || "Desconocido",
+        servicio: cita.servicioId?.nombre || "Desconocido",
         fecha: cita.fecha,
         estado: cita.estado,
         notas: cita.notas,
@@ -61,7 +54,7 @@ export default function CitasPage() {
     clienteId: string;
     servicioId: string;
     fecha: string;
-    estado: string;
+    estado?: string;
     notas?: string;
   }) => {
     try {
@@ -84,33 +77,12 @@ export default function CitasPage() {
     }
   };
 
-  const handleSearch = async () => {
-    try {
-      if (searchQuery.trim() !== "") {
-        const data = await getCitaById(searchQuery);
-        setCitas([data]);
-        toast.info("Búsqueda completada.");
-      } else {
-        fetchCitas();
-        toast.info("Mostrando todas las citas.");
-      }
-    } catch (error) {
-      toast.error("Error al buscar citas.");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="container mx-auto">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           Gestión de Citas
         </h1>
-
-        <SearchBar
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onSearch={handleSearch}
-        />
 
         <div className="flex justify-center mb-6">
           <AddButton onClick={() => setShowModal(true)} isOpen={showModal} />
@@ -139,7 +111,13 @@ export default function CitasPage() {
 
         {editingCita && (
           <CitaModal
-            cita={editingCita}
+            cita={{
+              clienteId: editingCita.clienteId,
+              servicioId: editingCita.servicioId,
+              fecha: editingCita.fecha,
+              estado: editingCita.estado,
+              notas: editingCita.notas,
+            }}
             onClose={() => setEditingCita(null)}
             onSave={(updatedCita) => {
               fetchCitas();

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import {
   getClientes,
   createCliente,
+  updateCliente,
   deleteCliente,
   searchClienteByNombre,
 } from "@/services/clienteApi";
@@ -60,23 +61,30 @@ export default function ClientesPage() {
     } catch (error) {
       toast.error("Error al buscar clientes.");
     } finally {
-      setSearchType(null); 
+      setSearchType(null);
     }
   };
 
-  const handleCreateClient = async (client: {
+  const handleSaveClient = async (client: {
     nombre: string;
     correo: string;
     telefono: string;
     rol: string;
   }) => {
     try {
-      await createCliente(client);
-      setShowModal(false);
+      if (editingClient) {
+        await updateCliente(editingClient.id, client);
+        toast.success("Cliente actualizado correctamente.");
+      } else {
+        await createCliente(client);
+        toast.success("Cliente creado correctamente.");
+      }
       fetchClients();
-      toast.success("Cliente creado correctamente.");
     } catch (error) {
-      toast.error("Error al crear el cliente.");
+      toast.error("Error al guardar el cliente.");
+    } finally {
+      setEditingClient(null);
+      setShowModal(false);
     }
   };
 
@@ -118,7 +126,10 @@ export default function ClientesPage() {
             <ClientCard
               key={client.id}
               client={client}
-              onEdit={() => setEditingClient(client)}
+              onEdit={() => {
+                setEditingClient(client);
+                setShowModal(true);
+              }}
               onDelete={() => handleDeleteClient(client.id)}
             />
           ))}
@@ -129,9 +140,7 @@ export default function ClientesPage() {
         <ClientModal
           client={editingClient}
           onClose={() => setShowModal(false)}
-          onSave={(newClient) => {
-            handleCreateClient(newClient);
-          }}
+          onSave={handleSaveClient}
         />
       )}
 

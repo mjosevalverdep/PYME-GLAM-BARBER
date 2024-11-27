@@ -20,7 +20,7 @@ export const createService = async (service: { name: string; category: string; p
 
 // Actualizar un servicio
 export const updateService = async (id: string, service: { name: string; category: string; price: number }) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}/editar/${id}`, { 
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(service),

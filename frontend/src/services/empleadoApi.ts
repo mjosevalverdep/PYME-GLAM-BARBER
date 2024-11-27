@@ -25,7 +25,7 @@ export const updateEmpleado = async (
   id: string,
   empleado: { nombre: string; puesto: string; correo: string; telefono: string }
 ) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}/editar/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(empleado),

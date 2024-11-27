@@ -32,40 +32,6 @@ exports.getCitas = async (req, res) => {
   }
 };
 
-exports.getCitaById = async (req, res) => {
-  try {
-    const cita = await Cita.findById(req.params.id);
-    if (!cita) {
-      return res.status(404).json({ message: 'Cita no encontrada' });
-    }
-    res.status(200).json(cita);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.updateEstadoCita = async (req, res) => {
-  const { id } = req.params;
-  const { estado } = req.body;
-
-  try {
-    if (!['programada', 'completada', 'cancelada'].includes(estado)) {
-      return res.status(400).json({ message: 'Estado no válido' });
-    }
-
-    const cita = await Cita.findById(id);
-    if (!cita) {
-      return res.status(404).json({ message: 'Cita no encontrada' });
-    }
-
-    cita.estado = estado;
-    await cita.save();
-    res.status(200).json(cita);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 exports.cancelarCita = async (req, res) => {
   const { id } = req.params;
 

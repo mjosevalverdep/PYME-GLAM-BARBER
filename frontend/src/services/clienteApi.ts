@@ -27,7 +27,7 @@ export const updateCliente = async (id: string, cliente: {
   telefono: string;
   rol: string;
 }) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}/editar/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cliente),

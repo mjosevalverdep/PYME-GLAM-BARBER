@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface CitaModalProps {
   cita: {
@@ -21,22 +21,33 @@ interface CitaModalProps {
 }
 
 export default function CitaModal({ cita, onClose, onSave }: CitaModalProps) {
-  const [clienteId, setClienteId] = useState(cita?.clienteId || "");
-  const [servicioId, setServicioId] = useState(cita?.servicioId || "");
-  const [fecha, setFecha] = useState(cita?.fecha || "");
-  const [estado, setEstado] = useState(cita?.estado || "programada");
-  const [notas, setNotas] = useState(cita?.notas || "");
+  const [clienteId, setClienteId] = useState("");
+  const [servicioId, setServicioId] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [estado, setEstado] = useState("programada");
+  const [notas, setNotas] = useState("");
+
+  // Inicializar los valores del estado con la cita recibida
+  useEffect(() => {
+    if (cita) {
+      setClienteId(cita.clienteId);
+      setServicioId(cita.servicioId);
+      setFecha(new Date(cita.fecha).toISOString().slice(0, 16)); // Formato para input datetime-local
+      setEstado(cita.estado);
+      setNotas(cita.notas || "");
+    }
+  }, [cita]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newCita = {
+    const updatedCita = {
       clienteId,
       servicioId,
       fecha,
       estado,
       notas,
     };
-    onSave(newCita);
+    onSave(updatedCita);
   };
 
   return (

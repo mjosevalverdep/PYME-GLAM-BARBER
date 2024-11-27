@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import {
   getEmpleados,
   createEmpleado,
+  updateEmpleado,
   deleteEmpleado,
   searchEmpleadoByNombre,
   searchEmpleadoByCorreo,
@@ -26,7 +27,7 @@ interface Employee {
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [searchType, setSearchType] = useState<"nombre" | "correo" | "telefono" | "puesto" | null>(
     null
   );
@@ -52,6 +53,39 @@ export default function EmployeesPage() {
     }
   };
 
+  const handleSaveEmployee = async (employee: {
+    nombre: string;
+    puesto: string;
+    correo: string;
+    telefono: string;
+  }) => {
+    try {
+      if (editingEmployee) {
+        await updateEmpleado(editingEmployee.id, employee);
+        toast.success("Empleado actualizado correctamente.");
+      } else {
+        await createEmpleado(employee);
+        toast.success("Empleado creado correctamente.");
+      }
+      fetchEmployees();
+    } catch (error) {
+      toast.error("Error al guardar el empleado.");
+    } finally {
+      setEditingEmployee(null);
+      setShowModal(false);
+    }
+  };
+
+  const handleDeleteEmployee = async (id: string) => {
+    try {
+      await deleteEmpleado(id);
+      fetchEmployees();
+      toast.success("Empleado eliminado correctamente.");
+    } catch (error) {
+      toast.error("Error al eliminar el empleado.");
+    }
+  };
+
   const handleSearch = async (query: string) => {
     try {
       let data;
@@ -71,7 +105,7 @@ export default function EmployeesPage() {
     } catch (error) {
       toast.error("Error al buscar empleados.");
     } finally {
-      setSearchType(null); 
+      setSearchType(null);
     }
   };
 
@@ -107,46 +141,45 @@ export default function EmployeesPage() {
           >
             Buscar por Puesto
           </button>
-          <AddButton onClick={() => setShowForm(!showForm)} isOpen={showForm} />
-        </div>
-
-        {showForm && (
-          <div className="mb-6 bg-white rounded shadow p-6">
-            <EmployeeModal
-              employee={editingEmployee}
-              onClose={() => setEditingEmployee(null)}
-              onSave={(newEmployee) => {
-                fetchEmployees();
-                setShowForm(false);
-                toast.success("Empleado creado correctamente.");
-              }}
-            />
-          </div>
-        )}
-
-        {searchType && (
-          <SearchModal
-            type={searchType}
-            onClose={() => setSearchType(null)}
-            onSearch={handleSearch}
+          <AddButton
+            onClick={() => {
+              setEditingEmployee(null);
+              setShowModal(true);
+            }}
+            isOpen={showModal}
           />
-        )}
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {employees.map((employee) => (
             <EmployeeCard
               key={employee.id}
               employee={employee}
-              onEdit={() => setEditingEmployee(employee)}
-              onDelete={() => {
-                deleteEmpleado(employee.id);
-                fetchEmployees();
-                toast.success("Empleado eliminado correctamente.");
+              onEdit={() => {
+                setEditingEmployee(employee);
+                setShowModal(true);
               }}
+              onDelete={() => handleDeleteEmployee(employee.id)}
             />
           ))}
         </div>
       </div>
+
+      {showModal && (
+        <EmployeeModal
+          employee={editingEmployee}
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveEmployee}
+        />
+      )}
+
+      {searchType && (
+        <SearchModal
+          type={searchType}
+          onClose={() => setSearchType(null)}
+          onSearch={handleSearch}
+        />
+      )}
     </div>
   );
 }
