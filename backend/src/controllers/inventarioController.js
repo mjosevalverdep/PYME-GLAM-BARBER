@@ -3,6 +3,11 @@ const Inventario = require('../models/Inventario');
 
 exports.createInventario = async (req, res) => {
   const { producto, cantidad, precioUnidad, proveedor } = req.body;
+
+  if (!producto || !cantidad || !precioUnidad) {
+    return res.status(400).json({ message: 'Faltan campos requeridos' });
+  }
+
   try {
     const inventario = await inventarioService.createInventario({ producto, cantidad, precioUnidad, proveedor });
     res.status(201).json(inventario);

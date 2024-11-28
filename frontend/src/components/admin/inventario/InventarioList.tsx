@@ -8,17 +8,17 @@ const InventarioList = () => {
   const [inventarios, setInventarios] = useState<any[]>([]);
   const [error, setError] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [newInventario, setNewInventario] = useState({
-    producto: '', 
+  const [nuevoInventario, setNuevoInventario] = useState({
+    producto: '',
     cantidad: 0,
-    precioUnidad: 0, 
+    precioUnidad: 0,
     proveedor: '',
   });
-  
-  const [editingInventario, setEditingInventario] = useState<any | null>(null);
+
+  const [inventarioEditando, setInventarioEditando] = useState<any | null>(null);
 
   useEffect(() => {
-    const fetchInventarios = async () => {
+    const obtenerInventarios = async () => {
       try {
         const data = await getInventario();
         setInventarios(data);
@@ -27,37 +27,39 @@ const InventarioList = () => {
       }
     };
 
-    fetchInventarios();
+    obtenerInventarios();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewInventario({
-      ...newInventario,
-      [name]: value,
+    const valorParseado = name === 'cantidad' || name === 'precioUnidad' ? parseFloat(value) : value;
+    setNuevoInventario({
+      ...nuevoInventario,
+      [name]: valorParseado,
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const inventarioData = {
-        producto: newInventario.producto,
-        cantidad: newInventario.cantidad,
-        precioUnidad: newInventario.precioUnidad,
-        proveedor: newInventario.proveedor,
+      const datosInventario = {
+        producto: nuevoInventario.producto,
+        cantidad: nuevoInventario.cantidad,
+        precioUnidad: nuevoInventario.precioUnidad,
+        proveedor: nuevoInventario.proveedor,
+        creadoEn: new Date(), // este campo es el que maneja la fecha por defecto
       };
 
-      if (editingInventario) {
-        const updatedInventario = await updateInventario(editingInventario._id, inventarioData);
-        setInventarios(inventarios.map(inventario => (inventario._id === updatedInventario._id ? updatedInventario : inventario)));
+      if (inventarioEditando) {
+        const inventarioActualizado = await updateInventario(inventarioEditando._id, datosInventario);
+        setInventarios(inventarios.map(inventario => (inventario._id === inventarioActualizado._id ? inventarioActualizado : inventario)));
       } else {
-        const inventario = await createInventario(inventarioData);
+        const inventario = await createInventario(datosInventario);
         setInventarios([...inventarios, inventario]);
       }
       setShowModal(false);
-      setEditingInventario(null);
-      setNewInventario({
+      setInventarioEditando(null);
+      setNuevoInventario({
         producto: '',
         cantidad: 0,
         precioUnidad: 0,
@@ -68,9 +70,9 @@ const InventarioList = () => {
     }
   };
 
-  const handleEdit = (inventario: any) => {
-    setEditingInventario(inventario);
-    setNewInventario({
+  const manejarEdicion = (inventario: any) => {
+    setInventarioEditando(inventario);
+    setNuevoInventario({
       producto: inventario.producto,
       cantidad: inventario.cantidad,
       precioUnidad: inventario.precioUnidad,
@@ -79,7 +81,7 @@ const InventarioList = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const manejarEliminacion = async (id: string) => {
     try {
       await deleteInventario(id);
       setInventarios(inventarios.filter(inventario => inventario._id !== id));
@@ -97,7 +99,7 @@ const InventarioList = () => {
         <button
           onClick={() => {
             setShowModal(true);
-            setEditingInventario(null);
+            setInventarioEditando(null);
           }}
           className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
         >
@@ -114,13 +116,13 @@ const InventarioList = () => {
             <p className="text-gray-700"><strong>Precio por unidad:</strong> {inventario.precioUnidad}</p>
             <div className="flex justify-center space-x-4 mt-2">
               <button
-                onClick={() => handleEdit(inventario)}
+                onClick={() => manejarEdicion(inventario)}
                 className="text-gray-600 hover:text-gray-800"
               >
                 <FaEdit className="inline-block" />
               </button>
               <button
-                onClick={() => handleDelete(inventario._id)}
+                onClick={() => manejarEliminacion(inventario._id)}
                 className="text-red-600 hover:text-red-800"
               >
                 <FaTrash className="inline-block" />
@@ -133,8 +135,8 @@ const InventarioList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{editingInventario ? 'Editar Inventario' : 'Agregar Inventario'}</h2>
-            <form onSubmit={handleSubmit}>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{inventarioEditando ? 'Editar Inventario' : 'Agregar Inventario'}</h2>
+            <form onSubmit={manejarEnvio}>
               <div className="mb-4">
                 <label htmlFor="producto" className="block text-gray-700">Producto</label>
                 <input
@@ -142,8 +144,8 @@ const InventarioList = () => {
                   name="producto"
                   id="producto"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                  value={newInventario.producto}
-                  onChange={handleInputChange}
+                  value={nuevoInventario.producto}
+                  onChange={manejarCambioInput}
                   required
                 />
               </div>
@@ -154,8 +156,8 @@ const InventarioList = () => {
                   name="proveedor"
                   id="proveedor"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                  value={newInventario.proveedor}
-                  onChange={handleInputChange}
+                  value={nuevoInventario.proveedor}
+                  onChange={manejarCambioInput}
                 />
               </div>
               <div className="mb-4">
@@ -165,8 +167,8 @@ const InventarioList = () => {
                   name="cantidad"
                   id="cantidad"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                  value={newInventario.cantidad}
-                  onChange={handleInputChange}
+                  value={nuevoInventario.cantidad}
+                  onChange={manejarCambioInput}
                   required
                 />
               </div>
@@ -177,8 +179,8 @@ const InventarioList = () => {
                   name="precioUnidad"
                   id="precioUnidad"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                  value={newInventario.precioUnidad}
-                  onChange={handleInputChange}
+                  value={nuevoInventario.precioUnidad}
+                  onChange={manejarCambioInput}
                   required
                 />
               </div>
@@ -195,7 +197,7 @@ const InventarioList = () => {
                   type="submit"
                   className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
-                  {editingInventario ? 'Actualizar' : 'Agregar'}
+                  {inventarioEditando ? 'Actualizar' : 'Agregar'}
                 </button>
               </div>
             </form>
