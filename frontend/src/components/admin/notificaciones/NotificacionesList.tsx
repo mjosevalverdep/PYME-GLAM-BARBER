@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { FaTrash, FaEnvelope } from 'react-icons/fa';
-import { getNotifications, createNotification } from '@/services/notificacionApi';
-import { getClientes } from '@/services/clienteApi';
+import React, { useEffect, useState } from "react";
+import { FaTrash, FaEnvelope } from "react-icons/fa";
+import {
+  getNotifications,
+  createNotification,
+} from "@/services/notificacionApi";
+import { getClientes } from "@/services/clienteApi";
 
 interface Notification {
   _id: string;
@@ -19,15 +22,15 @@ interface Cliente {
 
 const NotificationList = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newNotification, setNewNotification] = useState({
-    clienteID: '',
-    mensaje: '',
-    tipo: '',
-    fechaEnvio: '',
+    clienteID: "",
+    mensaje: "",
+    tipo: "",
+    fechaEnvio: "",
   });
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [clientes, setClientes] = useState<Cliente[]>([]);
 
   useEffect(() => {
@@ -36,7 +39,7 @@ const NotificationList = () => {
         const data = await getNotifications();
         setNotifications(data);
       } catch (err) {
-        setError('No se pudo obtener las notificaciones');
+        setError("No se pudo obtener las notificaciones");
       }
     };
 
@@ -45,7 +48,7 @@ const NotificationList = () => {
         const data = await getClientes();
         setClientes(data);
       } catch (err) {
-        setError('No se pudo obtener los clientes');
+        setError("No se pudo obtener los clientes");
       }
     };
 
@@ -58,11 +61,13 @@ const NotificationList = () => {
       if (searchQuery) {
         try {
           const filteredNotifications = notifications.filter((notification) =>
-            notification.mensaje.toLowerCase().includes(searchQuery.toLowerCase())
+            notification.mensaje
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()),
           );
           setNotifications(filteredNotifications);
         } catch (err) {
-          setError('No se pudo realizar la búsqueda');
+          setError("No se pudo realizar la búsqueda");
         }
       } else {
         const data = await getNotifications();
@@ -73,13 +78,17 @@ const NotificationList = () => {
     fetchSearchResults();
   }, [searchQuery]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
     setNewNotification({
       ...newNotification,
       [name]: value,
     });
-  };  
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,13 +97,13 @@ const NotificationList = () => {
       setNotifications([...notifications, notification]);
       setShowModal(false);
       setNewNotification({
-        clienteID: '',
-        mensaje: '',
-        tipo: '',
-        fechaEnvio: '',
+        clienteID: "",
+        mensaje: "",
+        tipo: "",
+        fechaEnvio: "",
       });
     } catch (err) {
-      setError('No se pudo guardar la notificación');
+      setError("No se pudo guardar la notificación");
     }
   };
 
@@ -113,11 +122,20 @@ const NotificationList = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {notifications.map(notification => (
-          <div key={notification._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">{notification.mensaje}</h2>
-            <p className="text-gray-700"><strong>Tipo:</strong> {notification.tipo}</p>
-            <p className="text-gray-700"><strong>Fecha de envío:</strong> {notification.fechaEnvio}</p>
+        {notifications.map((notification) => (
+          <div
+            key={notification._id}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              {notification.mensaje}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Tipo:</strong> {notification.tipo}
+            </p>
+            <p className="text-gray-700">
+              <strong>Fecha de envío:</strong> {notification.fechaEnvio}
+            </p>
           </div>
         ))}
       </div>
@@ -125,10 +143,14 @@ const NotificationList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">Agregar Notificación</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              Agregar Notificación
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="clienteID" className="block text-gray-700">Seleccionar Cliente</label>
+                <label htmlFor="clienteID" className="block text-gray-700">
+                  Seleccionar Cliente
+                </label>
                 <select
                   id="clienteID"
                   name="clienteID"
@@ -146,7 +168,9 @@ const NotificationList = () => {
                 </select>
               </div>
               <div className="mb-4">
-                <label htmlFor="mensaje" className="block text-gray-700">Mensaje</label>
+                <label htmlFor="mensaje" className="block text-gray-700">
+                  Mensaje
+                </label>
                 <textarea
                   name="mensaje"
                   id="mensaje"
@@ -157,23 +181,27 @@ const NotificationList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="tipo" className="block text-gray-700">Tipo</label>
+                <label htmlFor="tipo" className="block text-gray-700">
+                  Tipo
+                </label>
                 <select
-                    id="tipo"
-                    name="tipo"
-                    className="w-full p-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                    value={newNotification.tipo}
-                    onChange={handleInputChange}
-                    required
+                  id="tipo"
+                  name="tipo"
+                  className="w-full p-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
+                  value={newNotification.tipo}
+                  onChange={handleInputChange}
+                  required
                 >
-                    <option value="">Seleccione un tipo</option>
-                    <option value="recordatorio">Recordatorio</option>
-                    <option value="alerta">Alerta</option>
-                    <option value="información">Información</option>
+                  <option value="">Seleccione un tipo</option>
+                  <option value="recordatorio">Recordatorio</option>
+                  <option value="alerta">Alerta</option>
+                  <option value="información">Información</option>
                 </select>
-            </div>
+              </div>
               <div className="mb-4">
-                <label htmlFor="fechaEnvio" className="block text-gray-700">Fecha de Envío</label>
+                <label htmlFor="fechaEnvio" className="block text-gray-700">
+                  Fecha de Envío
+                </label>
                 <input
                   type="date"
                   name="fechaEnvio"

@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { getInventario, createInventario, updateInventario, deleteInventario } from '@/services/inventarioApi';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import {
+  getInventario,
+  createInventario,
+  updateInventario,
+  deleteInventario,
+} from "@/services/inventarioApi";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const InventarioList = () => {
   const [inventarios, setInventarios] = useState<any[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [nuevoInventario, setNuevoInventario] = useState({
-    producto: '',
+    producto: "",
     cantidad: 0,
     precioUnidad: 0,
-    proveedor: '',
+    proveedor: "",
   });
 
-  const [inventarioEditando, setInventarioEditando] = useState<any | null>(null);
+  const [inventarioEditando, setInventarioEditando] = useState<any | null>(
+    null,
+  );
 
   useEffect(() => {
     const obtenerInventarios = async () => {
@@ -23,7 +30,7 @@ const InventarioList = () => {
         const data = await getInventario();
         setInventarios(data);
       } catch (err) {
-        setError('No se pudo obtener los inventarios');
+        setError("No se pudo obtener los inventarios");
       }
     };
 
@@ -32,7 +39,10 @@ const InventarioList = () => {
 
   const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const valorParseado = name === 'cantidad' || name === 'precioUnidad' ? parseFloat(value) : value;
+    const valorParseado =
+      name === "cantidad" || name === "precioUnidad"
+        ? parseFloat(value)
+        : value;
     setNuevoInventario({
       ...nuevoInventario,
       [name]: valorParseado,
@@ -51,8 +61,17 @@ const InventarioList = () => {
       };
 
       if (inventarioEditando) {
-        const inventarioActualizado = await updateInventario(inventarioEditando._id, datosInventario);
-        setInventarios(inventarios.map(inventario => (inventario._id === inventarioActualizado._id ? inventarioActualizado : inventario)));
+        const inventarioActualizado = await updateInventario(
+          inventarioEditando._id,
+          datosInventario,
+        );
+        setInventarios(
+          inventarios.map((inventario) =>
+            inventario._id === inventarioActualizado._id
+              ? inventarioActualizado
+              : inventario,
+          ),
+        );
       } else {
         const inventario = await createInventario(datosInventario);
         setInventarios([...inventarios, inventario]);
@@ -60,13 +79,13 @@ const InventarioList = () => {
       setShowModal(false);
       setInventarioEditando(null);
       setNuevoInventario({
-        producto: '',
+        producto: "",
         cantidad: 0,
         precioUnidad: 0,
-        proveedor: '',
+        proveedor: "",
       });
     } catch (err) {
-      setError('No se pudo guardar el inventario');
+      setError("No se pudo guardar el inventario");
     }
   };
 
@@ -84,9 +103,9 @@ const InventarioList = () => {
   const manejarEliminacion = async (id: string) => {
     try {
       await deleteInventario(id);
-      setInventarios(inventarios.filter(inventario => inventario._id !== id));
+      setInventarios(inventarios.filter((inventario) => inventario._id !== id));
     } catch (err) {
-      setError('No se pudo eliminar el inventario');
+      setError("No se pudo eliminar el inventario");
     }
   };
 
@@ -108,12 +127,23 @@ const InventarioList = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {inventarios.map(inventario => (
-          <div key={inventario._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">{inventario.producto}</h2>
-            <p className="text-gray-700"><strong>Proveedor:</strong> {inventario.proveedor}</p>
-            <p className="text-gray-700"><strong>Cantidad:</strong> {inventario.cantidad}</p>
-            <p className="text-gray-700"><strong>Precio por unidad:</strong> {inventario.precioUnidad}</p>
+        {inventarios.map((inventario) => (
+          <div
+            key={inventario._id}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              {inventario.producto}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Proveedor:</strong> {inventario.proveedor}
+            </p>
+            <p className="text-gray-700">
+              <strong>Cantidad:</strong> {inventario.cantidad}
+            </p>
+            <p className="text-gray-700">
+              <strong>Precio por unidad:</strong> {inventario.precioUnidad}
+            </p>
             <div className="flex justify-center space-x-4 mt-2">
               <button
                 onClick={() => manejarEdicion(inventario)}
@@ -135,10 +165,14 @@ const InventarioList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{inventarioEditando ? 'Editar Inventario' : 'Agregar Inventario'}</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              {inventarioEditando ? "Editar Inventario" : "Agregar Inventario"}
+            </h2>
             <form onSubmit={manejarEnvio}>
               <div className="mb-4">
-                <label htmlFor="producto" className="block text-gray-700">Producto</label>
+                <label htmlFor="producto" className="block text-gray-700">
+                  Producto
+                </label>
                 <input
                   type="text"
                   name="producto"
@@ -150,7 +184,9 @@ const InventarioList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="proveedor" className="block text-gray-700">Proveedor</label>
+                <label htmlFor="proveedor" className="block text-gray-700">
+                  Proveedor
+                </label>
                 <input
                   type="text"
                   name="proveedor"
@@ -161,7 +197,9 @@ const InventarioList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="cantidad" className="block text-gray-700">Cantidad</label>
+                <label htmlFor="cantidad" className="block text-gray-700">
+                  Cantidad
+                </label>
                 <input
                   type="number"
                   name="cantidad"
@@ -173,7 +211,9 @@ const InventarioList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="precioUnidad" className="block text-gray-700">Precio por unidad</label>
+                <label htmlFor="precioUnidad" className="block text-gray-700">
+                  Precio por unidad
+                </label>
                 <input
                   type="number"
                   name="precioUnidad"
@@ -197,7 +237,7 @@ const InventarioList = () => {
                   type="submit"
                   className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
-                  {inventarioEditando ? 'Actualizar' : 'Agregar'}
+                  {inventarioEditando ? "Actualizar" : "Agregar"}
                 </button>
               </div>
             </form>

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { getClientes } from "@/services/clienteApi";
 import { getEmpleados } from "@/services/empleadoApi";
-import { getServices } from "@/services/serviceApi"; 
+import { getServices } from "@/services/serviceApi";
 import { createFeedback } from "@/services/feedbackApi";
 import { useRouter } from "next/navigation";
 
@@ -33,7 +33,9 @@ const FeedbackForm: React.FC = () => {
   const [selectedServicio, setSelectedServicio] = useState<string>("");
   const [calificacion, setCalificacion] = useState<number>(5);
   const [comentario, setComentario] = useState<string>("");
-  const [fecha, setFecha] = useState<string>(new Date().toISOString().slice(0, 16));
+  const [fecha, setFecha] = useState<string>(
+    new Date().toISOString().slice(0, 16),
+  );
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const fetchClientes = async () => {
@@ -108,7 +110,9 @@ const FeedbackForm: React.FC = () => {
       onSubmit={handleSubmit}
       className="bg-white bg-opacity-90 rounded-lg shadow-lg p-8 w-full max-w-lg my-6"
     >
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Deja tu Feedback</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        Deja tu Feedback
+      </h2>
 
       <div className="mb-4 text-left">
         <label htmlFor="cliente" className="block text-gray-600 mb-2">

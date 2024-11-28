@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const historialSchema = new mongoose.Schema({
     clienteID: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: true },
-    serviceID: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
+    servicio: { type: String, required: true },
     fecha: { type: Date, required: true },
     empleadoID: { type: mongoose.Schema.Types.ObjectId, ref: 'Empleado', required: true }
 });

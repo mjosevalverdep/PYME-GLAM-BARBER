@@ -1,23 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { getEmpleados, createEmpleado, updateEmpleado, deleteEmpleado, searchEmpleadoByNombre } from '@/services/empleadoApi';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import {
+  getEmpleados,
+  createEmpleado,
+  updateEmpleado,
+  deleteEmpleado,
+  searchEmpleadoByNombre,
+} from "@/services/empleadoApi";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const EmpleadoList = () => {
   const [empleados, setEmpleados] = useState<any[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newEmpleado, setNewEmpleado] = useState({
-    nombre: '',
-    puesto: '',
-    correo: '',
-    telefono: '',
-    rol: '',
-    password: '',
+    nombre: "",
+    puesto: "",
+    correo: "",
+    telefono: "",
+    rol: "",
+    password: "",
   });
   const [editingEmpleado, setEditingEmpleado] = useState<any | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchEmpleados = async () => {
@@ -25,7 +31,7 @@ const EmpleadoList = () => {
         const data = await getEmpleados();
         setEmpleados(data);
       } catch (err) {
-        setError('No se pudo obtener los empleados');
+        setError("No se pudo obtener los empleados");
       }
     };
 
@@ -39,7 +45,7 @@ const EmpleadoList = () => {
           const data = await searchEmpleadoByNombre(searchQuery);
           setEmpleados(data);
         } catch (err) {
-          setError('No se pudo realizar la búsqueda');
+          setError("No se pudo realizar la búsqueda");
         }
       } else {
         const data = await getEmpleados();
@@ -62,8 +68,15 @@ const EmpleadoList = () => {
     e.preventDefault();
     try {
       if (editingEmpleado) {
-        const updatedEmpleado = await updateEmpleado(editingEmpleado._id, newEmpleado);
-        setEmpleados(empleados.map(empleado => (empleado._id === updatedEmpleado._id ? updatedEmpleado : empleado)));
+        const updatedEmpleado = await updateEmpleado(
+          editingEmpleado._id,
+          newEmpleado,
+        );
+        setEmpleados(
+          empleados.map((empleado) =>
+            empleado._id === updatedEmpleado._id ? updatedEmpleado : empleado,
+          ),
+        );
       } else {
         const empleado = await createEmpleado(newEmpleado);
         setEmpleados([...empleados, empleado]);
@@ -71,15 +84,15 @@ const EmpleadoList = () => {
       setShowModal(false);
       setEditingEmpleado(null);
       setNewEmpleado({
-        nombre: '',
-        puesto: '',
-        correo: '',
-        telefono: '',
-        rol: '',
-        password: '',
+        nombre: "",
+        puesto: "",
+        correo: "",
+        telefono: "",
+        rol: "",
+        password: "",
       });
     } catch (err) {
-      setError('No se pudo guardar el empleado');
+      setError("No se pudo guardar el empleado");
     }
   };
 
@@ -91,7 +104,7 @@ const EmpleadoList = () => {
       correo: empleado.correo,
       telefono: empleado.telefono,
       rol: empleado.rol,
-      password: '',
+      password: "",
     });
     setShowModal(true);
   };
@@ -99,9 +112,9 @@ const EmpleadoList = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteEmpleado(id);
-      setEmpleados(empleados.filter(empleado => empleado._id !== id));
+      setEmpleados(empleados.filter((empleado) => empleado._id !== id));
     } catch (err) {
-      setError('No se pudo eliminar el empleado');
+      setError("No se pudo eliminar el empleado");
     }
   };
 
@@ -131,13 +144,26 @@ const EmpleadoList = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {empleados.map(empleado => (
-          <div key={empleado._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">{empleado.nombre}</h2>
-            <p className="text-gray-700"><strong>Puesto:</strong> {empleado.puesto}</p>
-            <p className="text-gray-700"><strong>Correo:</strong> {empleado.correo}</p>
-            <p className="text-gray-700"><strong>Teléfono:</strong> {empleado.telefono}</p>
-            <p className="text-gray-700"><strong>Rol:</strong> {empleado.rol}</p>
+        {empleados.map((empleado) => (
+          <div
+            key={empleado._id}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              {empleado.nombre}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Puesto:</strong> {empleado.puesto}
+            </p>
+            <p className="text-gray-700">
+              <strong>Correo:</strong> {empleado.correo}
+            </p>
+            <p className="text-gray-700">
+              <strong>Teléfono:</strong> {empleado.telefono}
+            </p>
+            <p className="text-gray-700">
+              <strong>Rol:</strong> {empleado.rol}
+            </p>
             <div className="flex justify-center space-x-4 mt-2">
               <button
                 onClick={() => handleEdit(empleado)}
@@ -159,10 +185,14 @@ const EmpleadoList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{editingEmpleado ? 'Editar Empleado' : 'Agregar Empleado'}</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              {editingEmpleado ? "Editar Empleado" : "Agregar Empleado"}
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="nombre" className="block text-gray-700">Nombre</label>
+                <label htmlFor="nombre" className="block text-gray-700">
+                  Nombre
+                </label>
                 <input
                   type="text"
                   name="nombre"
@@ -174,7 +204,9 @@ const EmpleadoList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="puesto" className="block text-gray-700">Puesto</label>
+                <label htmlFor="puesto" className="block text-gray-700">
+                  Puesto
+                </label>
                 <input
                   type="text"
                   name="puesto"
@@ -186,7 +218,9 @@ const EmpleadoList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="correo" className="block text-gray-700">Correo</label>
+                <label htmlFor="correo" className="block text-gray-700">
+                  Correo
+                </label>
                 <input
                   type="email"
                   name="correo"
@@ -198,7 +232,9 @@ const EmpleadoList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="telefono" className="block text-gray-700">Teléfono</label>
+                <label htmlFor="telefono" className="block text-gray-700">
+                  Teléfono
+                </label>
                 <input
                   type="text"
                   name="telefono"
@@ -210,7 +246,9 @@ const EmpleadoList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="rol" className="block text-gray-700">Rol</label>
+                <label htmlFor="rol" className="block text-gray-700">
+                  Rol
+                </label>
                 <input
                   type="text"
                   name="rol"
@@ -222,7 +260,9 @@ const EmpleadoList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="password" className="block text-gray-700">Contraseña</label>
+                <label htmlFor="password" className="block text-gray-700">
+                  Contraseña
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -246,7 +286,7 @@ const EmpleadoList = () => {
                   type="submit"
                   className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
-                  {editingEmpleado ? 'Actualizar' : 'Agregar'}
+                  {editingEmpleado ? "Actualizar" : "Agregar"}
                 </button>
               </div>
             </form>

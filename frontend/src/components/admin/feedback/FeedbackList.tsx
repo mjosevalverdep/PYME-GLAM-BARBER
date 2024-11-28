@@ -31,10 +31,19 @@ const FeedbackList: React.FC = () => {
             key={feedback._id}
             className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
           >
-            <p className="text-gray-700"><strong>Servicio:</strong> {feedback.servicio}</p>
-            <p className="text-gray-700"><strong>Calificación:</strong> {feedback.calificacion}</p>
-            <p className="text-gray-700"><strong>Comentario:</strong> {feedback.comentario}</p>
-            <p className="text-gray-700"><strong>Fecha:</strong> {new Date(feedback.fecha).toLocaleString()}</p>
+            <p className="text-gray-700">
+              <strong>Servicio:</strong> {feedback.servicio}
+            </p>
+            <p className="text-gray-700">
+              <strong>Calificación:</strong> {feedback.calificacion}
+            </p>
+            <p className="text-gray-700">
+              <strong>Comentario:</strong> {feedback.comentario}
+            </p>
+            <p className="text-gray-700">
+              <strong>Fecha:</strong>{" "}
+              {new Date(feedback.fecha).toLocaleString()}
+            </p>
           </div>
         ))}
       </div>

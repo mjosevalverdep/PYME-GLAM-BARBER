@@ -1,7 +1,7 @@
 const Historial = require('../models/Historial');
 
-exports.create = async (clienteID, serviceID, fecha, empleadoID) => {
-  const historial = new Historial({ clienteID, serviceID, fecha, empleadoID });
+exports.create = async (clienteID, servicio, fecha, empleadoID) => {
+  const historial = new Historial({ clienteID, servicio, fecha, empleadoID });
   await historial.save();
   return historial;
 };

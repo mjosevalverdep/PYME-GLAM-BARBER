@@ -1,22 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { getClientes, createCliente, updateCliente, deleteCliente, searchClienteByNombre } from '@/services/clienteApi';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import {
+  getClientes,
+  createCliente,
+  updateCliente,
+  deleteCliente,
+  searchClienteByNombre,
+} from "@/services/clienteApi";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const ClientesList = () => {
   const [clientes, setClientes] = useState<any[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newCliente, setNewCliente] = useState({
-    nombre: '',
-    correo: '',
-    telefono: '',
-    rol: '',
-    password: '',
+    nombre: "",
+    correo: "",
+    telefono: "",
+    rol: "",
+    password: "",
   });
   const [editingCliente, setEditingCliente] = useState<any | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>(''); 
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -24,7 +30,7 @@ const ClientesList = () => {
         const data = await getClientes();
         setClientes(data);
       } catch (err) {
-        setError('No se pudo obtener los clientes');
+        setError("No se pudo obtener los clientes");
       }
     };
 
@@ -38,7 +44,7 @@ const ClientesList = () => {
           const data = await searchClienteByNombre(searchQuery);
           setClientes(data);
         } catch (err) {
-          setError('No se pudo realizar la búsqueda');
+          setError("No se pudo realizar la búsqueda");
         }
       } else {
         const data = await getClientes();
@@ -60,8 +66,15 @@ const ClientesList = () => {
     e.preventDefault();
     try {
       if (editingCliente) {
-        const updatedCliente = await updateCliente(editingCliente._id, newCliente);
-        setClientes(clientes.map(cliente => (cliente._id === updatedCliente._id ? updatedCliente : cliente)));
+        const updatedCliente = await updateCliente(
+          editingCliente._id,
+          newCliente,
+        );
+        setClientes(
+          clientes.map((cliente) =>
+            cliente._id === updatedCliente._id ? updatedCliente : cliente,
+          ),
+        );
       } else {
         const cliente = await createCliente(newCliente);
         setClientes([...clientes, cliente]);
@@ -69,14 +82,14 @@ const ClientesList = () => {
       setShowModal(false);
       setEditingCliente(null);
       setNewCliente({
-        nombre: '',
-        correo: '',
-        telefono: '',
-        rol: '',
-        password: '',
+        nombre: "",
+        correo: "",
+        telefono: "",
+        rol: "",
+        password: "",
       });
     } catch (err) {
-      setError('No se pudo guardar el cliente');
+      setError("No se pudo guardar el cliente");
     }
   };
 
@@ -87,7 +100,7 @@ const ClientesList = () => {
       correo: cliente.correo,
       telefono: cliente.telefono,
       rol: cliente.rol,
-      password: '',
+      password: "",
     });
     setShowModal(true);
   };
@@ -95,9 +108,9 @@ const ClientesList = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteCliente(id);
-      setClientes(clientes.filter(cliente => cliente._id !== id));
+      setClientes(clientes.filter((cliente) => cliente._id !== id));
     } catch (err) {
-      setError('No se pudo eliminar el cliente');
+      setError("No se pudo eliminar el cliente");
     }
   };
 
@@ -127,12 +140,23 @@ const ClientesList = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clientes.map(cliente => (
-          <div key={cliente._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">{cliente.nombre}</h2>
-            <p className="text-gray-700"><strong>Correo:</strong> {cliente.correo}</p>
-            <p className="text-gray-700"><strong>Teléfono:</strong> {cliente.telefono}</p>
-            <p className="text-gray-700"><strong>Rol:</strong> {cliente.rol}</p>
+        {clientes.map((cliente) => (
+          <div
+            key={cliente._id}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              {cliente.nombre}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Correo:</strong> {cliente.correo}
+            </p>
+            <p className="text-gray-700">
+              <strong>Teléfono:</strong> {cliente.telefono}
+            </p>
+            <p className="text-gray-700">
+              <strong>Rol:</strong> {cliente.rol}
+            </p>
             <div className="flex justify-center space-x-4 mt-2">
               <button
                 onClick={() => handleEdit(cliente)}
@@ -154,10 +178,14 @@ const ClientesList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{editingCliente ? 'Editar Cliente' : 'Agregar Cliente'}</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              {editingCliente ? "Editar Cliente" : "Agregar Cliente"}
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="nombre" className="block text-gray-700">Nombre</label>
+                <label htmlFor="nombre" className="block text-gray-700">
+                  Nombre
+                </label>
                 <input
                   type="text"
                   name="nombre"
@@ -169,7 +197,9 @@ const ClientesList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="correo" className="block text-gray-700">Correo</label>
+                <label htmlFor="correo" className="block text-gray-700">
+                  Correo
+                </label>
                 <input
                   type="email"
                   name="correo"
@@ -181,7 +211,9 @@ const ClientesList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="telefono" className="block text-gray-700">Teléfono</label>
+                <label htmlFor="telefono" className="block text-gray-700">
+                  Teléfono
+                </label>
                 <input
                   type="text"
                   name="telefono"
@@ -193,7 +225,9 @@ const ClientesList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="rol" className="block text-gray-700">Rol</label>
+                <label htmlFor="rol" className="block text-gray-700">
+                  Rol
+                </label>
                 <input
                   type="text"
                   name="rol"
@@ -205,7 +239,9 @@ const ClientesList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="password" className="block text-gray-700">Contraseña</label>
+                <label htmlFor="password" className="block text-gray-700">
+                  Contraseña
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -229,7 +265,7 @@ const ClientesList = () => {
                   type="submit"
                   className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
-                  {editingCliente ? 'Actualizar' : 'Agregar'}
+                  {editingCliente ? "Actualizar" : "Agregar"}
                 </button>
               </div>
             </form>

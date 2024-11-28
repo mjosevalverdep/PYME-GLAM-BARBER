@@ -43,7 +43,7 @@ const CitaForm: React.FC = () => {
   const fetchClientes = async () => {
     try {
       const data: Cliente[] = await getClientes();
-      setClientes(data.map(cliente => ({ ...cliente, id: cliente._id })));
+      setClientes(data.map((cliente) => ({ ...cliente, id: cliente._id })));
     } catch (error) {
       toast.error("Error al obtener los clientes.");
       console.error("Error al obtener los clientes:", error);

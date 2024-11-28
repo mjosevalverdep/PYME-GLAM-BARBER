@@ -64,13 +64,21 @@ const SuscripcionList = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!selectedCliente || newSuscripcion.costo <= 0 || !newSuscripcion.fechaInicio || !newSuscripcion.fechaFin) {
+    if (
+      !selectedCliente ||
+      newSuscripcion.costo <= 0 ||
+      !newSuscripcion.fechaInicio ||
+      !newSuscripcion.fechaFin
+    ) {
       toast.warn("Debe completar todos los campos.");
       setIsSubmitting(false);
       return;
     }
 
-    const newSuscripcionWithCliente = { ...newSuscripcion, clienteID: selectedCliente };
+    const newSuscripcionWithCliente = {
+      ...newSuscripcion,
+      clienteID: selectedCliente,
+    };
 
     try {
       const suscripcion = await createSuscripcion(newSuscripcionWithCliente);
@@ -104,12 +112,25 @@ const SuscripcionList = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {suscripciones.map((suscripcion, index) => (
-          <div key={index} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">Cliente: {suscripcion.clienteID}</h2>
-            <p className="text-gray-700"><strong>Tipo:</strong> {suscripcion.tipo}</p>
-            <p className="text-gray-700"><strong>Costo:</strong> {suscripcion.costo}</p>
-            <p className="text-gray-700"><strong>Fecha Inicio:</strong> {suscripcion.fechaInicio}</p>
-            <p className="text-gray-700"><strong>Fecha Fin:</strong> {suscripcion.fechaFin}</p>
+          <div
+            key={index}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              Cliente: {suscripcion.clienteID}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Tipo:</strong> {suscripcion.tipo}
+            </p>
+            <p className="text-gray-700">
+              <strong>Costo:</strong> {suscripcion.costo}
+            </p>
+            <p className="text-gray-700">
+              <strong>Fecha Inicio:</strong> {suscripcion.fechaInicio}
+            </p>
+            <p className="text-gray-700">
+              <strong>Fecha Fin:</strong> {suscripcion.fechaFin}
+            </p>
           </div>
         ))}
       </div>
@@ -117,10 +138,14 @@ const SuscripcionList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">Agregar Suscripción</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              Agregar Suscripción
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="clienteID" className="block text-gray-700">Seleccionar Cliente</label>
+                <label htmlFor="clienteID" className="block text-gray-700">
+                  Seleccionar Cliente
+                </label>
                 <select
                   id="cliente"
                   value={selectedCliente}
@@ -137,49 +162,77 @@ const SuscripcionList = () => {
                 </select>
               </div>
               <div className="mb-4">
-                <label htmlFor="tipo" className="block text-gray-700">Tipo de Suscripción</label>
+                <label htmlFor="tipo" className="block text-gray-700">
+                  Tipo de Suscripción
+                </label>
                 <select
                   name="tipo"
                   id="tipo"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
                   value={newSuscripcion.tipo}
-                  onChange={(e) => setNewSuscripcion({ ...newSuscripcion, tipo: e.target.value })}
+                  onChange={(e) =>
+                    setNewSuscripcion({
+                      ...newSuscripcion,
+                      tipo: e.target.value,
+                    })
+                  }
                 >
                   <option value="Mensual">Mensual</option>
                   <option value="Anual">Anual</option>
                 </select>
               </div>
               <div className="mb-4">
-                <label htmlFor="costo" className="block text-gray-700">Costo</label>
+                <label htmlFor="costo" className="block text-gray-700">
+                  Costo
+                </label>
                 <input
                   type="number"
                   name="costo"
                   id="costo"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
                   value={newSuscripcion.costo}
-                  onChange={(e) => setNewSuscripcion({ ...newSuscripcion, costo: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setNewSuscripcion({
+                      ...newSuscripcion,
+                      costo: Number(e.target.value),
+                    })
+                  }
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="fechaInicio" className="block text-gray-700">Fecha de Inicio</label>
+                <label htmlFor="fechaInicio" className="block text-gray-700">
+                  Fecha de Inicio
+                </label>
                 <input
                   type="date"
                   name="fechaInicio"
                   id="fechaInicio"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
                   value={newSuscripcion.fechaInicio}
-                  onChange={(e) => setNewSuscripcion({ ...newSuscripcion, fechaInicio: e.target.value })}
+                  onChange={(e) =>
+                    setNewSuscripcion({
+                      ...newSuscripcion,
+                      fechaInicio: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="fechaFin" className="block text-gray-700">Fecha de Fin</label>
+                <label htmlFor="fechaFin" className="block text-gray-700">
+                  Fecha de Fin
+                </label>
                 <input
                   type="date"
                   name="fechaFin"
                   id="fechaFin"
                   className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
                   value={newSuscripcion.fechaFin}
-                  onChange={(e) => setNewSuscripcion({ ...newSuscripcion, fechaFin: e.target.value })}
+                  onChange={(e) =>
+                    setNewSuscripcion({
+                      ...newSuscripcion,
+                      fechaFin: e.target.value,
+                    })
+                  }
                 />
               </div>
               <button

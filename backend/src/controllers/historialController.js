@@ -1,10 +1,10 @@
 const Historial = require('../models/Historial');
 
 exports.createHistorial = async (req, res) => {
-  const { clienteID, serviceID, fecha, empleadoID } = req.body;
+  const { clienteID, servicio, fecha, empleadoID } = req.body;
 
   try {
-    const nuevoHistorial = new Historial({ clienteID, serviceID, fecha, empleadoID });
+    const nuevoHistorial = new Historial({ clienteID, servicio, fecha, empleadoID });
     await nuevoHistorial.save();
     res.status(201).json(nuevoHistorial);
   } catch (error) {

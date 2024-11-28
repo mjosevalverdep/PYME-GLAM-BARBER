@@ -22,7 +22,7 @@ const PagoForm: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [selectedCliente, setSelectedCliente] = useState<string>("");
   const [monto, setMonto] = useState<number>(0);
-  const [metodo, setMetodo] = useState<string>("Efectivo"); 
+  const [metodo, setMetodo] = useState<string>("Efectivo");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const fetchClientes = async () => {
@@ -70,7 +70,7 @@ const PagoForm: React.FC = () => {
   const handleMontoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     if (value < 0) {
-      setMonto(0); 
+      setMonto(0);
       toast.warn("El monto no puede ser negativo.");
     } else {
       setMonto(value);
@@ -112,7 +112,7 @@ const PagoForm: React.FC = () => {
           type="number"
           id="monto"
           value={monto}
-          onChange={handleMontoChange} 
+          onChange={handleMontoChange}
           className="w-full text-black border border-gray-300 rounded px-3 py-2"
           required
         />

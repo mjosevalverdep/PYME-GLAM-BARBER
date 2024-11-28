@@ -31,7 +31,13 @@ export const createEmpleado = async (empleado: {
 
 export const updateEmpleado = async (
   id: string,
-  empleado: { nombre: string; puesto: string; correo: string; telefono: string; rol: string }
+  empleado: {
+    nombre: string;
+    puesto: string;
+    correo: string;
+    telefono: string;
+    rol: string;
+  },
 ) => {
   const response = await fetch(`${API_URL}/editar/${id}`, {
     method: "PUT",

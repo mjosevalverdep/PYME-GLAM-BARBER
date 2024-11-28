@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getEncuestas } from "@/services/encuestaApi"; 
+import { getEncuestas } from "@/services/encuestaApi";
 
 interface Encuesta {
   _id: string;
@@ -36,11 +36,14 @@ const EncuestasList = () => {
             key={encuesta._id}
             className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
           >
-            <h2 className="text-xl font-medium text-gray-800 mb-2">Encuesta {encuesta._id}</h2>
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              Encuesta {encuesta._id}
+            </h2>
             <ul className="text-gray-700">
               {encuesta.preguntas.map((pregunta, index) => (
                 <li key={index} className="mb-2">
-                  <strong>{index + 1}. </strong>{pregunta}
+                  <strong>{index + 1}. </strong>
+                  {pregunta}
                 </li>
               ))}
             </ul>

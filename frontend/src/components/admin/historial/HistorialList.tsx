@@ -3,18 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { getClientes } from "@/services/clienteApi";
-import { getServices } from "@/services/serviceApi";
+import { getHistorial, createHistorial } from "@/services/historialApi";
 import { getEmpleados } from "@/services/empleadoApi";
-import { createHistorial } from "@/services/historialApi";
-import { getHistorial } from "@/services/historialApi";
 import { useRouter } from "next/navigation";
 
 interface Cliente {
-  _id: string;
-  nombre: string;
-}
-
-interface Service {
   _id: string;
   nombre: string;
 }
@@ -26,7 +19,7 @@ interface Empleado {
 
 interface Historial {
   clienteID: string;
-  serviceID: string;
+  servicio: string;
   fecha: string;
   empleadoID: string;
 }
@@ -35,22 +28,20 @@ const HistorialList = () => {
   const router = useRouter();
   const [historiales, setHistoriales] = useState<Historial[]>([]);
   const [selectedCliente, setSelectedCliente] = useState<string>("");
-  const [selectedService, setSelectedService] = useState<string>("");
   const [selectedEmpleado, setSelectedEmpleado] = useState<string>("");
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
   const [empleados, setEmpleados] = useState<Empleado[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newHistorial, setNewHistorial] = useState<Historial>({
     clienteID: "",
-    serviceID: "",
+    servicio: "",
     fecha: "",
     empleadoID: "",
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchHistoriales = async () => {
+    const fetchHistorial = async () => {
       try {
         const data = await getHistorial();
         setHistoriales(data);
@@ -70,16 +61,6 @@ const HistorialList = () => {
       }
     };
 
-    const fetchServices = async () => {
-      try {
-        const data: Service[] = await getServices();
-        setServices(data);
-      } catch (error) {
-        toast.error("Error al obtener los servicios.");
-        console.error("Error al obtener los servicios:", error);
-      }
-    };
-
     const fetchEmpleados = async () => {
       try {
         const data: Empleado[] = await getEmpleados();
@@ -90,9 +71,8 @@ const HistorialList = () => {
       }
     };
 
-    fetchHistoriales();
+    fetchHistorial();
     fetchClientes();
-    fetchServices();
     fetchEmpleados();
   }, []);
 
@@ -102,8 +82,8 @@ const HistorialList = () => {
 
     if (
       !selectedCliente ||
-      !selectedService ||
       !selectedEmpleado ||
+      !newHistorial.servicio ||
       !newHistorial.fecha
     ) {
       toast.warn("Debe completar todos los campos.");
@@ -111,20 +91,19 @@ const HistorialList = () => {
       return;
     }
 
-    const newHistorialWithData = {
+    const newHistorialWithCliente = {
       ...newHistorial,
       clienteID: selectedCliente,
-      serviceID: selectedService,
       empleadoID: selectedEmpleado,
     };
 
     try {
-      const historial = await createHistorial(newHistorialWithData);
+      const historial = await createHistorial(newHistorialWithCliente);
       setHistoriales([...historiales, historial]);
       setShowModal(false);
       setNewHistorial({
         clienteID: "",
-        serviceID: "",
+        servicio: "",
         fecha: "",
         empleadoID: "",
       });
@@ -148,25 +127,32 @@ const HistorialList = () => {
       </button>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {historiales.map((historial, index) => (
-          <div
-            key={index}
-            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-          >
-            <h2 className="text-xl font-medium text-gray-800 mb-2">
-              Cliente: {historial.clienteID}
-            </h2>
-            <p className="text-gray-700">
-              <strong>Servicio:</strong> {historial.serviceID}
-            </p>
-            <p className="text-gray-700">
-              <strong>Empleado:</strong> {historial.empleadoID}
-            </p>
-            <p className="text-gray-700">
-              <strong>Fecha:</strong> {historial.fecha}
-            </p>
-          </div>
-        ))}
+        {historiales.map((historial, index) => {
+          const cliente = clientes.find((c) => c._id === historial.clienteID);
+          const empleado = empleados.find(
+            (e) => e._id === historial.empleadoID,
+          );
+          return (
+            <div
+              key={index}
+              className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+            >
+              <h2 className="text-xl font-medium text-gray-800 mb-2">
+                Cliente: {cliente?.nombre || "Desconocido"}
+              </h2>
+              <p className="text-gray-700">
+                <strong>Servicio:</strong> {historial.servicio}
+              </p>
+              <p className="text-gray-700">
+                <strong>Empleado:</strong> {empleado?.nombre || "Desconocido"}
+              </p>
+              <p className="text-gray-700">
+                <strong>Fecha:</strong>{" "}
+                {new Date(historial.fecha).toLocaleDateString()}
+              </p>
+            </div>
+          );
+        })}
       </div>
 
       {showModal && (
@@ -195,25 +181,26 @@ const HistorialList = () => {
                   ))}
                 </select>
               </div>
+
               <div className="mb-4">
-                <label htmlFor="serviceID" className="block text-gray-700">
-                  Seleccionar Servicio
+                <label htmlFor="servicio" className="block text-gray-700">
+                  Servicio
                 </label>
-                <select
-                  id="serviceID"
-                  value={selectedService}
-                  onChange={(e) => setSelectedService(e.target.value)}
+                <input
+                  type="text"
+                  id="servicio"
                   className="w-full text-black border border-gray-300 rounded px-3 py-2"
+                  value={newHistorial.servicio}
+                  onChange={(e) =>
+                    setNewHistorial({
+                      ...newHistorial,
+                      servicio: e.target.value,
+                    })
+                  }
                   required
-                >
-                  <option value="">Seleccione un servicio</option>
-                  {services.map((service) => (
-                    <option key={service._id} value={service._id}>
-                      {service.nombre}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
+
               <div className="mb-4">
                 <label htmlFor="empleadoID" className="block text-gray-700">
                   Seleccionar Empleado
@@ -233,29 +220,37 @@ const HistorialList = () => {
                   ))}
                 </select>
               </div>
+
               <div className="mb-4">
                 <label htmlFor="fecha" className="block text-gray-700">
                   Fecha
                 </label>
                 <input
                   type="date"
-                  name="fecha"
                   id="fecha"
-                  className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
+                  className="w-full text-black border border-gray-300 rounded px-3 py-2"
                   value={newHistorial.fecha}
                   onChange={(e) =>
                     setNewHistorial({ ...newHistorial, fecha: e.target.value })
                   }
+                  required
                 />
               </div>
+
               <button
                 type="submit"
-                className="bg-black text-white py-2 px-4 rounded hover:bg-gray-700 transition"
+                className="w-full bg-blue-600 text-white py-2 rounded-lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Procesando..." : "Crear Historial"}
+                {isSubmitting ? "Cargando..." : "Crear Historial"}
               </button>
             </form>
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
+            >
+              X
+            </button>
           </div>
         </div>
       )}

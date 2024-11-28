@@ -1,5 +1,5 @@
-import Header from '@/layouts/admin/Header';
-import HomeMain from '@/components/admin/HomeMain';
+import Header from "@/layouts/admin/Header";
+import HomeMain from "@/components/admin/HomeMain";
 
 export default function Home() {
   return (

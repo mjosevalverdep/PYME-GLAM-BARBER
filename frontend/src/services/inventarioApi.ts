@@ -17,16 +17,20 @@ export const createInventario = async (producto: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(producto),
   });
-  if (!response.ok) throw new Error("Error al agregar el producto al inventario");
+  if (!response.ok)
+    throw new Error("Error al agregar el producto al inventario");
   return response.json();
 };
 
-export const updateInventario = async (id: string, producto: {
-  producto: string;
-  cantidad: number;
-  precioUnidad: number;
-  proveedor?: string;
-}) => {
+export const updateInventario = async (
+  id: string,
+  producto: {
+    producto: string;
+    cantidad: number;
+    precioUnidad: number;
+    proveedor?: string;
+  },
+) => {
   const response = await fetch(`${API_URL}/editar/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

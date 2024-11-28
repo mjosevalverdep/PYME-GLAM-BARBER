@@ -6,9 +6,7 @@ export const getEncuestas = async () => {
   return response.json();
 };
 
-export const createEncuesta = async (encuesta: {
-  preguntas: string[];
-}) => {
+export const createEncuesta = async (encuesta: { preguntas: string[] }) => {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

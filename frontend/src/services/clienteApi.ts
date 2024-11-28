@@ -1,7 +1,7 @@
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/clientes`;
 
 export const getClientes = async () => {
-  const response = await fetch(API_URL); 
+  const response = await fetch(API_URL);
   if (!response.ok) throw new Error("Error al obtener los clientes");
   return response.json();
 };
@@ -21,12 +21,15 @@ export const createCliente = async (cliente: {
   return response.json();
 };
 
-export const updateCliente = async (id: string, cliente: {
-  nombre: string;
-  correo: string;
-  telefono: string;
-  rol: string;
-}) => {
+export const updateCliente = async (
+  id: string,
+  cliente: {
+    nombre: string;
+    correo: string;
+    telefono: string;
+    rol: string;
+  },
+) => {
   const response = await fetch(`${API_URL}/editar/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

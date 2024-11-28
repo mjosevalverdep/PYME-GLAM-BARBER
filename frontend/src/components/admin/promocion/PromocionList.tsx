@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { getPromociones, createPromocion } from '@/services/promocionApi';
+import React, { useEffect, useState } from "react";
+import { getPromociones, createPromocion } from "@/services/promocionApi";
 
 const PromocionList = () => {
   const [promociones, setPromociones] = useState<any[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newPromocion, setNewPromocion] = useState({
-    nombre: '',
-    descripcion: '',
-    validoDesde: '',
-    validoHasta: '',
+    nombre: "",
+    descripcion: "",
+    validoDesde: "",
+    validoHasta: "",
   });
   const [editingPromocion, setEditingPromocion] = useState<any | null>(null);
 
@@ -21,7 +21,7 @@ const PromocionList = () => {
         const data = await getPromociones();
         setPromociones(data);
       } catch (err) {
-        setError('No se pudo obtener las promociones');
+        setError("No se pudo obtener las promociones");
       }
     };
 
@@ -48,13 +48,13 @@ const PromocionList = () => {
       setShowModal(false);
       setEditingPromocion(null);
       setNewPromocion({
-        nombre: '',
-        descripcion: '',
-        validoDesde: '',
-        validoHasta: '',
+        nombre: "",
+        descripcion: "",
+        validoDesde: "",
+        validoHasta: "",
       });
     } catch (err) {
-      setError('No se pudo guardar la promoción');
+      setError("No se pudo guardar la promoción");
     }
   };
 
@@ -76,12 +76,23 @@ const PromocionList = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {promociones.map(promocion => (
-          <div key={promocion._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">{promocion.nombre}</h2>
-            <p className="text-gray-700"><strong>Descripción:</strong> {promocion.descripcion}</p>
-            <p className="text-gray-700"><strong>Válido desde:</strong> {promocion.validoDesde}</p>
-            <p className="text-gray-700"><strong>Válido hasta:</strong> {promocion.validoHasta}</p>
+        {promociones.map((promocion) => (
+          <div
+            key={promocion._id}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              {promocion.nombre}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Descripción:</strong> {promocion.descripcion}
+            </p>
+            <p className="text-gray-700">
+              <strong>Válido desde:</strong> {promocion.validoDesde}
+            </p>
+            <p className="text-gray-700">
+              <strong>Válido hasta:</strong> {promocion.validoHasta}
+            </p>
           </div>
         ))}
       </div>
@@ -89,10 +100,14 @@ const PromocionList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{editingPromocion ? 'Editar Promoción' : 'Agregar Promoción'}</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              {editingPromocion ? "Editar Promoción" : "Agregar Promoción"}
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="nombre" className="block text-gray-700">Nombre</label>
+                <label htmlFor="nombre" className="block text-gray-700">
+                  Nombre
+                </label>
                 <input
                   type="text"
                   name="nombre"
@@ -104,7 +119,9 @@ const PromocionList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="descripcion" className="block text-gray-700">Descripción</label>
+                <label htmlFor="descripcion" className="block text-gray-700">
+                  Descripción
+                </label>
                 <input
                   type="text"
                   name="descripcion"
@@ -116,7 +133,9 @@ const PromocionList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="validoDesde" className="block text-gray-700">Válido Desde</label>
+                <label htmlFor="validoDesde" className="block text-gray-700">
+                  Válido Desde
+                </label>
                 <input
                   type="date"
                   name="validoDesde"
@@ -128,7 +147,9 @@ const PromocionList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="validoHasta" className="block text-gray-700">Válido Hasta</label>
+                <label htmlFor="validoHasta" className="block text-gray-700">
+                  Válido Hasta
+                </label>
                 <input
                   type="date"
                   name="validoHasta"
@@ -152,7 +173,7 @@ const PromocionList = () => {
                   type="submit"
                   className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
-                  {editingPromocion ? 'Actualizar' : 'Agregar'}
+                  {editingPromocion ? "Actualizar" : "Agregar"}
                 </button>
               </div>
             </form>

@@ -18,7 +18,7 @@ interface Encuesta {
 const EncuestaForm: React.FC = () => {
   const router = useRouter();
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [preguntas, setPreguntas] = useState<string[]>([""]); 
+  const [preguntas, setPreguntas] = useState<string[]>([""]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const fetchClientes = async () => {
@@ -46,13 +46,13 @@ const EncuestaForm: React.FC = () => {
     }
 
     const nuevaEncuesta: Encuesta = {
-      preguntas,  
+      preguntas,
     };
 
     try {
       await createEncuesta(nuevaEncuesta);
       toast.success("Encuesta creada exitosamente.");
-      router.push("/");  
+      router.push("/");
     } catch (error) {
       toast.error("Error al crear la encuesta.");
       console.error("Error al crear la encuesta:", error);
@@ -72,7 +72,9 @@ const EncuestaForm: React.FC = () => {
       onSubmit={handleSubmit}
       className="bg-white bg-opacity-90 rounded-lg shadow-lg p-8 w-full max-w-lg my-6"
     >
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Crea tu Encuesta</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        Crea tu Encuesta
+      </h2>
 
       <div className="mb-4 text-left">
         <label className="block text-gray-600 mb-2">Preguntas</label>

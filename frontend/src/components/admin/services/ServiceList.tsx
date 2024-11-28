@@ -1,20 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { getServices, createService, updateService, deleteService} from '@/services/serviceApi';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import {
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+} from "@/services/serviceApi";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const ServiceList = () => {
   const [services, setServices] = useState<any[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newService, setNewService] = useState({
-    name: '',
-    category: '',
+    name: "",
+    category: "",
     price: 0,
   });
   const [editingService, setEditingService] = useState<any | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -22,7 +27,7 @@ const ServiceList = () => {
         const data = await getServices();
         setServices(data);
       } catch (err) {
-        setError('No se pudo obtener los servicios');
+        setError("No se pudo obtener los servicios");
       }
     };
 
@@ -41,8 +46,15 @@ const ServiceList = () => {
     e.preventDefault();
     try {
       if (editingService) {
-        const updatedService = await updateService(editingService._id, newService);
-        setServices(services.map(service => (service._id === updatedService._id ? updatedService : service)));
+        const updatedService = await updateService(
+          editingService._id,
+          newService,
+        );
+        setServices(
+          services.map((service) =>
+            service._id === updatedService._id ? updatedService : service,
+          ),
+        );
       } else {
         const service = await createService(newService);
         setServices([...services, service]);
@@ -50,12 +62,12 @@ const ServiceList = () => {
       setShowModal(false);
       setEditingService(null);
       setNewService({
-        name: '',
-        category: '',
+        name: "",
+        category: "",
         price: 0,
       });
     } catch (err) {
-      setError('No se pudo guardar el servicio');
+      setError("No se pudo guardar el servicio");
     }
   };
 
@@ -72,9 +84,9 @@ const ServiceList = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteService(id);
-      setServices(services.filter(service => service._id !== id));
+      setServices(services.filter((service) => service._id !== id));
     } catch (err) {
-      setError('No se pudo eliminar el servicio');
+      setError("No se pudo eliminar el servicio");
     }
   };
 
@@ -96,11 +108,20 @@ const ServiceList = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map(service => (
-          <div key={service._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-            <h2 className="text-xl font-medium text-gray-800 mb-2">{service.name}</h2>
-            <p className="text-gray-700"><strong>Categoría:</strong> {service.category}</p>
-            <p className="text-gray-700"><strong>Precio:</strong> ${service.price}</p>
+        {services.map((service) => (
+          <div
+            key={service._id}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+          >
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              {service.name}
+            </h2>
+            <p className="text-gray-700">
+              <strong>Categoría:</strong> {service.category}
+            </p>
+            <p className="text-gray-700">
+              <strong>Precio:</strong> ${service.price}
+            </p>
             <div className="flex justify-center space-x-4 mt-2">
               <button
                 onClick={() => handleEdit(service)}
@@ -122,10 +143,14 @@ const ServiceList = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-black text-center">{editingService ? 'Editar Servicio' : 'Agregar Servicio'}</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+              {editingService ? "Editar Servicio" : "Agregar Servicio"}
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="name" className="block text-gray-700">Nombre</label>
+                <label htmlFor="name" className="block text-gray-700">
+                  Nombre
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -137,7 +162,9 @@ const ServiceList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="category" className="block text-gray-700">Categoría</label>
+                <label htmlFor="category" className="block text-gray-700">
+                  Categoría
+                </label>
                 <input
                   type="text"
                   name="category"
@@ -149,7 +176,9 @@ const ServiceList = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="price" className="block text-gray-700">Precio</label>
+                <label htmlFor="price" className="block text-gray-700">
+                  Precio
+                </label>
                 <input
                   type="number"
                   name="price"
@@ -173,7 +202,7 @@ const ServiceList = () => {
                   type="submit"
                   className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
-                  {editingService ? 'Actualizar' : 'Agregar'}
+                  {editingService ? "Actualizar" : "Agregar"}
                 </button>
               </div>
             </form>

@@ -8,11 +8,11 @@ export const getHistorial = async () => {
 
 export const createHistorial = async (registro: {
   clienteID: string;
-  serviceID: string;
+  servicio: string;
   fecha: string;
   empleadoID: string;
 }) => {
-  const response = await fetch(`${API_URL}/historial`, {
+  const response = await fetch(`${API_URL}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(registro),
