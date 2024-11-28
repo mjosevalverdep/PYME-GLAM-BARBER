@@ -227,7 +227,7 @@ const ClientesList = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+                  className="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition"
                 >
                   {editingCliente ? 'Actualizar' : 'Agregar'}
                 </button>
