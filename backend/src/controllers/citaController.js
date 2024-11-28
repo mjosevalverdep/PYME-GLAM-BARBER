@@ -1,7 +1,8 @@
 const Cita = require('../models/Cita');
+const citaService = require('../services/citaService');
 
 exports.createCita = async (req, res) => {
-  const { clienteId, servicioId, fecha, notas } = req.body;
+  const { citaId, servicioId, fecha, notas } = req.body;
 
   try {
     const citaExistente = await Cita.findOne({ servicioId, fecha });
@@ -10,7 +11,7 @@ exports.createCita = async (req, res) => {
     }
 
     const nuevaCita = new Cita({
-      clienteId,
+      citaId,
       servicioId,
       fecha,
       notas
@@ -32,19 +33,16 @@ exports.getCitas = async (req, res) => {
   }
 };
 
-exports.cancelarCita = async (req, res) => {
-  const { id } = req.params;
-
+exports.eliminarCita = async (req, res) => {
   try {
-    const cita = await Cita.findById(id);
-    if (!cita) {
-      return res.status(404).json({ message: 'Cita no encontrada' });
+    const { id } = req.params;
+    const mensaje = await citaService.eliminarCita(id);
+    if (!mensaje) {
+      return res.status(404).json({ error: 'Cita no encontrada' });
     }
-
-    cita.estado = 'cancelada';
-    await cita.save();
-    res.status(200).json({ message: 'Cita cancelada' });
+    res.json({ mensaje });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ error: 'Error al eliminar la cita' });
   }
 };

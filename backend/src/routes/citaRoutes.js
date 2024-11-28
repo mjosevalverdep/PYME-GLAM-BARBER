@@ -4,6 +4,6 @@ const citaController = require('../controllers/citaController');
 
 router.post('/', citaController.createCita);
 router.get('/citas', citaController.getCitas);
-router.delete('/citas/:id', citaController.cancelarCita);
+router.delete('/:id', citaController.eliminarCita);
 
 module.exports = router;

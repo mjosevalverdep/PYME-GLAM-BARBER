@@ -10,18 +10,5 @@ exports.findAll = async () => {
   return await Cita.find();
 };
 
-exports.findById = async (id) => {
-  return await Cita.findById(id);
-};
+exports.eliminarCita = (id) => Cita.findByIdAndDelete(id);
 
-exports.updateEstado = async (id, estado) => {
-  return await Cita.findByIdAndUpdate(id, { estado }, { new: true });
-};
-
-exports.cancelar = async (id) => {
-  return await Cita.findByIdAndUpdate(id, { estado: 'cancelada' }, { new: true });
-};
-
-exports.checkDisponibilidad = async (servicioId, fecha) => {
-  return await Cita.findOne({ servicioId, fecha });
-};

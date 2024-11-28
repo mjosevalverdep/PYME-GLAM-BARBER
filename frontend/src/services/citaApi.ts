@@ -1,13 +1,11 @@
 const API_URL = `http://localhost:9000/api/citas`;
 
-// Obtener todas las citas
 export const getCitas = async () => {
   const response = await fetch(`${API_URL}/citas`);
   if (!response.ok) throw new Error('Error al obtener las citas');
   return response.json();
 };
 
-// Crear una cita
 export const createCita = async (cita: {
   clienteId: string;
   servicioId: string;
@@ -24,11 +22,18 @@ export const createCita = async (cita: {
   return response.json();
 };
 
-// Eliminar cita
 export const deleteCita = async (id: string) => {
-  const response = await fetch(`${API_URL}/citas/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/citas/${id}`, {
     method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
-  if (!response.ok) throw new Error('Error al eliminar la cita');
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Error al eliminar la cita');
+  }
+
   return response.json();
 };
