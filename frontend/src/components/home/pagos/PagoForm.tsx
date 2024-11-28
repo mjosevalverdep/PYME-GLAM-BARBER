@@ -67,11 +67,10 @@ const PagoForm: React.FC = () => {
     }
   };
 
-  // Función para prevenir números negativos
   const handleMontoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     if (value < 0) {
-      setMonto(0); // Si el valor es negativo, lo ajustamos a cero
+      setMonto(0); 
       toast.warn("El monto no puede ser negativo.");
     } else {
       setMonto(value);
@@ -113,7 +112,7 @@ const PagoForm: React.FC = () => {
           type="number"
           id="monto"
           value={monto}
-          onChange={handleMontoChange} // Cambiar la lógica para manejar montos negativos
+          onChange={handleMontoChange} 
           className="w-full text-black border border-gray-300 rounded px-3 py-2"
           required
         />
