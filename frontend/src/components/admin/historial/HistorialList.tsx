@@ -239,7 +239,7 @@ const HistorialList = () => {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg"
+                className="w-full bg-gray-600 text-white py-2 rounded-lg"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Cargando..." : "Crear Historial"}
