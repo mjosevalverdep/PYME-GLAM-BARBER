@@ -1,13 +1,11 @@
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/services`;
 
-// Obtener todos los servicios
 export const getServices = async () => {
   const response = await fetch(`${API_URL}`);
   if (!response.ok) throw new Error('Error al obtener los servicios');
   return response.json();
 };
 
-// Crear un servicio
 export const createService = async (service: { name: string; category: string; price: number }) => {
   const response = await fetch(`${API_URL}`, {
     method: 'POST',
@@ -18,7 +16,6 @@ export const createService = async (service: { name: string; category: string; p
   return response.json();
 };
 
-// Actualizar un servicio
 export const updateService = async (id: string, service: { name: string; category: string; price: number }) => {
   const response = await fetch(`${API_URL}/editar/${id}`, { 
     method: 'PUT',
@@ -29,7 +26,6 @@ export const updateService = async (id: string, service: { name: string; categor
   return response.json();
 };
 
-// Eliminar un servicio
 export const deleteService = async (id: string) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
@@ -38,14 +34,12 @@ export const deleteService = async (id: string) => {
   return response.json();
 };
 
-// Buscar servicios
 export const searchServices = async (query: string) => {
   const response = await fetch(`${API_URL}/search?query=${query}`);
   if (!response.ok) throw new Error('Error al buscar servicios');
   return response.json();
 };
 
-// Obtener un servicio por ID
 export const getServiceById = async (id: string) => {
   const response = await fetch(`${API_URL}/${id}`);
   if (!response.ok) throw new Error(`Error al obtener el servicio con ID: ${id}`);
