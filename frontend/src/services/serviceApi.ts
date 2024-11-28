@@ -33,15 +33,3 @@ export const deleteService = async (id: string) => {
   if (!response.ok) throw new Error('Error al eliminar el servicio');
   return response.json();
 };
-
-export const searchServices = async (query: string) => {
-  const response = await fetch(`${API_URL}/search?query=${query}`);
-  if (!response.ok) throw new Error('Error al buscar servicios');
-  return response.json();
-};
-
-export const getServiceById = async (id: string) => {
-  const response = await fetch(`${API_URL}/${id}`);
-  if (!response.ok) throw new Error(`Error al obtener el servicio con ID: ${id}`);
-  return response.json();
-};

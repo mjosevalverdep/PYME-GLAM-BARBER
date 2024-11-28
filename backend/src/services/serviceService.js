@@ -5,7 +5,3 @@ exports.create = async (name, category, price) => {
   await service.save();
   return service;
 };
-
-exports.findByCategory = async (category) => {
-  return await Service.find({ category });
-};
