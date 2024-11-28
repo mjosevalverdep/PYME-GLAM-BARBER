@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:9000/api/feedback";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/feedback`;
 
 export const getFeedback = async () => {
   const response = await fetch(`${API_URL}`);

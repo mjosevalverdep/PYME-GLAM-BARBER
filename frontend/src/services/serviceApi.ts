@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:9000/api/services';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/services`;
 
 // Obtener todos los servicios
 export const getServices = async () => {

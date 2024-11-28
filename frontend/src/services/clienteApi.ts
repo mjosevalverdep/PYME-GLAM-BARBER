@@ -1,7 +1,7 @@
-const API_URL = "http://localhost:9000/api/clientes";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/clientes`;
 
 export const getClientes = async () => {
-  const response = await fetch(`${API_URL}`);
+  const response = await fetch(API_URL); 
   if (!response.ok) throw new Error("Error al obtener los clientes");
   return response.json();
 };

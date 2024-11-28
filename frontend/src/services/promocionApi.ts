@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:9000/api/promociones";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/promociones`;
 
 export const getPromociones = async () => {
   const response = await fetch(`${API_URL}`);

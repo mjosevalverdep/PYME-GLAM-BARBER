@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:9000/api/citas';
+const API_URL = `http://localhost:9000/api/citas`;
 
 // Obtener todas las citas
 export const getCitas = async () => {

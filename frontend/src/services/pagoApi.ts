@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:9000/api/pagos";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/pagos`;
 
 export const getPagos = async () => {
   const response = await fetch(`${API_URL}`);
@@ -10,9 +10,8 @@ export const createPago = async (pago: {
   clienteID: string;
   monto: number;
   metodo: string;
-  fecha: string;
 }) => {
-  const response = await fetch(`${API_URL}`, {
+  const response = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pago),
