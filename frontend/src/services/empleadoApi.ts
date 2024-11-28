@@ -6,6 +6,12 @@ export const getEmpleados = async () => {
   return response.json();
 };
 
+export const getEmpleadoById = async (id: string) => {
+  const response = await fetch(`${API_URL}/${id}`);
+  if (!response.ok) throw new Error("Error al obtener el empleado por ID");
+  return response.json();
+};
+
 export const createEmpleado = async (empleado: {
   nombre: string;
   puesto: string;

@@ -9,3 +9,5 @@ exports.actualizarCliente = (id, data) => Cliente.findByIdAndUpdate(id, data, { 
 exports.eliminarCliente = (id) => Cliente.findByIdAndDelete(id);
 
 exports.buscarPorNombre = (nombre) => Cliente.find({ nombre: { $regex: nombre, $options: 'i' } });
+
+exports.obtenerClienteById = (id) => Cliente.findById(id);

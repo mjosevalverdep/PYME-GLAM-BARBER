@@ -64,3 +64,17 @@ exports.buscarPorNombre = async (req, res) => {
         res.status(500).json({ error: 'Error al buscar empleados por nombre' });
     }
 };
+
+exports.obtenerEmpleadoPorId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const empleado = await empleadoService.obtenerEmpleadoPorId(id);
+        if (!empleado) {
+            return res.status(404).json({ error: 'Empleado no encontrado' });
+        }
+        res.json(empleado);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el empleado' });
+    }
+};

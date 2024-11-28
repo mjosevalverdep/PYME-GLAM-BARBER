@@ -65,3 +65,16 @@ exports.buscarPorNombre = async (req, res) => {
     }
 };
 
+exports.obtenerClienteById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cliente = await clienteService.obtenerClienteById(id);
+        if (!cliente) {
+            return res.status(404).json({ error: 'Cliente no encontrado' });
+        }
+        res.json(cliente);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el cliente' });
+    }
+};

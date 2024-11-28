@@ -8,5 +8,6 @@ router.get('/', clienteController.obtenerClientes);
 router.put('/editar/:id', clienteController.actualizarCliente);
 router.delete('/:id', clienteController.eliminarCliente);
 router.get('/nombre/:nombre', clienteController.buscarPorNombre);
+router.get('/:id', clienteController.obtenerClienteById);
 
 module.exports = router;

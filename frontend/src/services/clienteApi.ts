@@ -49,3 +49,9 @@ export const searchClienteByNombre = async (nombre: string) => {
   if (!response.ok) throw new Error("Error al buscar cliente por nombre");
   return response.json();
 };
+
+export const getClienteById = async (id: string) => {
+  const response = await fetch(`${API_URL}/${id}`);
+  if (!response.ok) throw new Error("Error al obtener el cliente por ID");
+  return response.json();
+};

@@ -10,3 +10,4 @@ exports.eliminarEmpleado = (id) => Empleado.findByIdAndDelete(id);
 
 exports.buscarPorNombre = (nombre) => Empleado.find({ nombre: { $regex: nombre, $options: 'i' } });
 
+exports.obtenerEmpleadoPorId = (id) => Empleado.findById(id);
