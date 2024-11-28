@@ -49,9 +49,3 @@ export const searchClienteByNombre = async (nombre: string) => {
   if (!response.ok) throw new Error("Error al buscar cliente por nombre");
   return response.json();
 };
-
-export const getTotalClientes = async () => {
-  const response = await fetch(`${API_URL}/total`);
-  if (!response.ok) throw new Error("Error al contar los clientes");
-  return response.json();
-};
