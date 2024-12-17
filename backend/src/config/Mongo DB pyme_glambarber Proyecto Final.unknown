@@ -1,0 +1,1300 @@
+
+Creación de Base de Datos 
+-------------------------
+
+
+//Entrar donde tengo mi MongoDB (Debemos usar  puerto 27017)
+cd /Users/mariajosevalverdepena/Documents/Base\ de\ Datos\ NoSQL/mongodb-macos-aarch64-8.0.0/bin
+//Iniciar MongoDB
+./mongod --dbpath /Users/mariajosevalverdepena/PYME_GLAM_BARBER_DATA
+//Abrir Mongo Shell (En otra terminal)
+cd /Users/mariajosevalverdepena/Documents/Base\ de\ Datos\ NoSQL/mongosh-2.3.1-darwin-arm64/bin
+//Ejecutar Shell
+./mongosh
+-----------------------------------------------------
+// Cambiar a la base de datos 'pyme_glambarber' (se crea automáticamente si no existe)
+use pyme_glambarber
+
+// Insertar un documento inicial para verificar la base de datos
+db.test.insertOne({
+   mensaje: "Base de datos pyme_glambarber creada con éxito"
+})
+
+
+Creación de Usuarios (Roles)
+---------------------------
+//Entrar nuevamente a una terminal e iniciar MongoDB
+cd /Users/mariajosevalverdepena/Documents/Base\ de\ Datos\ NoSQL/mongodb-macos-aarch64-8.0.0/bin
+./mongod --dbpath /Users/mariajosevalverdepena/PYME_GLAM_BARBER_DATA
+
+//Abrir shell de mongo (Otra terminal)
+cd /Users/mariajosevalverdepena/Documents/Base\ de\ Datos\ NoSQL/mongosh-2.3.1-darwin-arm64/bin
+./mongosh
+
+// Cambiar a la base de datos admin
+use admin;
+
+// Crear el usuario Root (Administrador completo)
+db.createUser({
+  user: "admin_root",
+  pwd: "admin2024", // Contraseña sencilla
+  roles: [{ role: "root", db: "admin" }]
+});
+
+// Crear el usuario Cluster Admin (clusterAdmin en admin)
+db.createUser({
+  user: "cluster_admin",
+  pwd: "cluster2024", // Contraseña sencilla
+  roles: [{ role: "clusterAdmin", db: "admin" }]
+});
+
+// Crear el usuario Lectura Global (readAnyDatabase en admin)
+db.createUser({
+  user: "read_global",
+  pwd: "read2024", // Contraseña sencilla
+  roles: [{ role: "readAnyDatabase", db: "admin" }]
+});
+
+// Crear el usuario Escritura Global (readWriteAnyDatabase en admin)
+db.createUser({
+  user: "read_write_global",
+  pwd: "write2024", // Contraseña sencilla
+  roles: [{ role: "readWriteAnyDatabase", db: "admin" }]
+});
+
+// Crear el usuario para Administración Global de Usuarios (userAdminAnyDatabase en admin)
+db.createUser({
+  user: "user_admin_global",
+  pwd: "user2024", // Contraseña sencilla
+  roles: [{ role: "userAdminAnyDatabase", db: "admin" }]
+});
+
+// Cambiar a la base de datos pyme_glambarber
+use pyme_glambarber;
+
+// Crear el usuario Backend (readWrite en pyme_glambarber)
+db.createUser({
+  user: "backend_user",
+  pwd: "backend2024", // Contraseña sencilla
+  roles: [{ role: "readWrite", db: "pyme_glambarber" }]
+});
+
+// Crear el usuario Administrador de la Base de Datos (dbAdmin en pyme_glambarber)
+db.createUser({
+  user: "db_admin",
+  pwd: "dbadmin2024", // Contraseña sencilla
+  roles: [{ role: "dbAdmin", db: "pyme_glambarber" }]
+});
+
+// Crear el usuario Reportes (read en pyme_glambarber)
+db.createUser({
+  user: "report_user",
+  pwd: "report2024", // Contraseña sencilla
+  roles: [{ role: "read", db: "pyme_glambarber" }]
+});
+
+// Crear el usuario Administración de Roles Locales (userAdmin en pyme_glambarber)
+db.createUser({
+  user: "user_admin",
+  pwd: "localadmin2024", // Contraseña sencilla
+  roles: [{ role: "userAdmin", db: "pyme_glambarber" }]
+});
+
+//Consultar creación de usuarios
+use admin
+db.getUsers()
+----------------
+use pyme_glambarber
+db.getUsers()
+
+
+Creación de Colecciones
+------------------------
+
+
+// Cambiar a la base de datos 'pyme_glambarber'
+use pyme_glambarber;
+
+// Colección 1: Clientes 
+db.clientes.insertOne({
+  nombre: "María López",
+  correo: "maria.lopez@gmail.com",
+  telefono: "123456789",
+  rol: "cliente",
+  password: "maria1234", 
+  creadoEn: new Date()
+});
+
+// Colección 2: Empleados 
+db.empleados.insertOne({
+  nombre: "Pedro Pérez",
+  correo: "pedro.perez@gmail.com",
+  telefono: "987654321",
+  rol: "empleado",
+  puesto: "Estilista",
+  password: "pedro1234", 
+  creadoEn: new Date()
+});
+
+// Colección 3: Feedback 
+db.feedback.insertMany([
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"),  
+    empleadoID: ObjectId("60c72b2f5b9f0f1a2b3c4d60"),  
+    servicio: "Corte de cabello masculino",  
+    calificacion: 5,  
+    comentario: "Excelente servicio, muy profesional y amable.",
+    fecha: new Date("2024-12-01T12:30:00")  
+  }
+]);
+
+// Colección 4: Citas
+db.citas.insertOne({
+  clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"),
+  empleadoID: ObjectId("60c72b2f5b9f0f1a2b3c4d60"),
+  servicio: "Corte de cabello masculino",
+  fechaCita: new Date("2024-12-10T10:00:00"),
+  estado: "confirmada", // confirmada, pendiente, cancelada
+  creadoEn: new Date()
+});
+
+// Colección 5: Notificaciones
+db.notificaciones.insertMany([
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"),
+    mensaje: "Recordatorio: Tu cita está programada para mañana a las 10:00 AM.",
+    tipo: "recordatorio",
+    fechaEnvio: new Date("2024-12-09T10:00:00"),
+    leido: false
+  }
+]);
+
+// Colección 6: Servicios
+db.services.insertMany([
+  {
+    name: "Corte de Cabello Masculino",
+    category: "Cortes",
+    price: 15 // Número entero representando el precio
+  },
+  {
+    name: "Masaje Relajante",
+    category: "Masajes",
+    price: 35 // Número entero representando el precio
+  },
+  {
+    name: "Manicure",
+    category: "Estética",
+    price: 20 // Número entero representando el precio
+  }
+]);
+// Colección 7: Inventario
+
+db.inventarios.insertMany([
+  {
+    producto: "Shampoo",
+    cantidad: 50,
+    precioUnidad: 10,
+    proveedor: "Proveedores S.A.",
+    creadoEn: new Date()
+  },
+  {
+    producto: "Cera Capilar",
+    cantidad: 30,
+    precioUnidad: 8,
+    proveedor: "Cera & Co.",
+    creadoEn: new Date()
+  }
+]);
+
+// Colección 8: Pagos
+db.pagos.insertMany([
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"),
+    monto: 30.00,
+    metodo: "Tarjeta de Crédito",
+    fecha: new Date("2024-12-15T10:00:00")
+  },
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5f"),
+    monto: 20.00,
+    metodo: "Efectivo",
+    fecha: new Date("2024-12-14T14:00:00")
+  }
+]);
+
+// Colección 9: Promociones
+db.promociones.insertMany([
+  {
+    nombre: "Descuento Navideño",
+    descripcion: "20% de descuento en cortes de cabello",
+    validoDesde: new Date("2024-12-01T00:00:00"),
+    validoHasta: new Date("2024-12-31T23:59:59")
+  },
+  {
+    nombre: "Promo 2x1 en Manicure",
+    descripcion: "Aplica todos los martes de diciembre",
+    validoDesde: new Date("2024-12-01T00:00:00"),
+    validoHasta: new Date("2024-12-31T23:59:59")
+  }
+]);
+
+// Colección 10: Historial
+db.historial.insertMany([
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"),
+    servicio: "Corte de cabello masculino",
+    fecha: new Date("2024-12-01T12:00:00"),
+    empleadoID: ObjectId("60c72b2f5b9f0f1a2b3c4d60")
+  },
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5f"),
+    servicio: "Manicure",
+    fecha: new Date("2024-12-02T14:00:00"),
+    empleadoID: ObjectId("60c72b2f5b9f0f1a2b3c4d61")
+  }
+]);
+
+// Colección 11: Suscripciones
+db.suscripciones.insertMany([
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"),
+    tipo: "Mensual",
+    costo: 50.00,
+    fechaInicio: new Date("2024-12-01T00:00:00"),
+    fechaFin: new Date("2025-01-01T00:00:00")
+  },
+  {
+    clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5f"),
+    tipo: "Anual",
+    costo: 500.00,
+    fechaInicio: new Date("2024-12-01T00:00:00"),
+    fechaFin: new Date("2025-12-01T00:00:00")
+  }
+]);
+
+
+
+
+
+// Colección 12: Encuestas
+db.encuestas.insertMany([
+  {
+    titulo: "Satisfacción General",
+    preguntas: ["¿Cómo calificarías nuestro servicio?", "¿Recomendarías nuestro salón a tus amigos?"],
+    respuestas: [
+      { clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5e"), respuestas: [5, "Sí"] },
+      { clienteID: ObjectId("60c72b2f5b9f0f1a2b3c4d5f"), respuestas: [4, "Probablemente"] }
+    ],
+    creadoEn: new Date()
+  }
+]);
+
+// Verificación de todas las colecciones. (12)
+db.clientes.find();
+db.empleados.find();
+db.feedback.find();
+db.citas.find();
+db.notificaciones.find();
+db.servicios.find();
+db.inventario.find();
+db.pagos.find();
+db.promociones.find();
+db.historial.find();
+db.suscripciones.find();
+db.encuestas.find();
+
+
+Creación Validators 
+--------------------
+
+
+//Iniciar MongoDB
+cd /Users/mariajosevalverdepena/Documents/Base\ de\ Datos\ NoSQL/mongodb-macos-aarch64-8.0.0/bin
+./mongod --dbpath /Users/mariajosevalverdepena/PYME_GLAM_BARBER_DATA 
+
+//Abrir MongoDB Shell en otra terminal
+cd /Users/mariajosevalverdepena/Documents/Base\ de\ Datos\ NoSQL/mongosh-2.3.1-darwin-arm64/bin
+./mongosh
+
+//Cambiar o crear la base de datos 'pyme_glambarber'
+use pyme_glambarber
+
+// 1. Actualizar la colección 'clientes'
+db.runCommand({
+  collMod: "clientes",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["nombre", "correo", "telefono", "rol", "password", "creadoEn"],
+      properties: {
+        nombre: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        correo: { bsonType: "string", pattern: ".+@.+\\..+", description: "Debe ser un correo válido" },
+        telefono: { bsonType: "string", description: "Debe ser un string numérico" },
+        rol: { enum: ["cliente", "empleado"], description: "Debe ser 'cliente' o 'empleado'" },
+        password: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        creadoEn: { bsonType: "date", description: "Debe ser una fecha válida y es requerido" }
+      }
+    }
+  }
+});
+
+// 2. Actualizar la colección 'empleados'
+db.runCommand({
+  collMod: "empleados",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["nombre", "correo", "telefono", "rol", "puesto", "password", "creadoEn"],
+      properties: {
+        nombre: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        correo: { bsonType: "string", pattern: ".+@.+\\..+", description: "Debe ser un correo válido" },
+        telefono: { bsonType: "string", description: "Debe ser un string numérico" },
+        rol: { bsonType: "string", description: "Debe ser un string que describa el rol" },
+        puesto: { bsonType: "string", description: "Debe ser un string que describa el puesto" },
+        password: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        creadoEn: { bsonType: "date", description: "Debe ser una fecha válida y es requerido" }
+      }
+    }
+  }
+});
+
+// 3. Actualizar la colección 'feedbacks'
+db.runCommand({
+  collMod: "feedbacks",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["clienteID", "empleadoID", "servicio", "calificacion", "comentario", "fecha"],
+      properties: {
+        clienteID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al cliente" },
+        empleadoID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al empleado" },
+        servicio: { bsonType: "string", description: "Debe ser un string que describe el servicio" },
+        calificacion: { bsonType: "int", minimum: 1, maximum: 5, description: "Debe ser un entero entre 1 y 5" },
+        comentario: { bsonType: "string", description: "Debe ser un string con el comentario" },
+        fecha: { bsonType: "date", description: "Debe ser una fecha válida" }
+      }
+    }
+  }
+});
+
+// 4. Actualizar la colección 'notifications'
+db.runCommand({
+  collMod: "notifications",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["clienteID", "mensaje", "tipo", "fechaEnvio", "leido"],
+      properties: {
+        clienteID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al cliente" },
+        mensaje: { bsonType: "string", description: "Debe ser un string con el mensaje" },
+        tipo: { enum: ["recordatorio", "alerta", "información"], description: "Debe ser uno de los tipos permitidos" },
+        fechaEnvio: { bsonType: "date", description: "Debe ser una fecha válida de envío" },
+        leido: { bsonType: "bool", description: "Debe ser un booleano que indica si fue leído" }
+      }
+    }
+  }
+});
+
+// 5. Actualizar la colección 'citas'
+db.runCommand({
+  collMod: "citas",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["clienteID", "empleadoID", "servicio", "fechaHora", "estado"],
+      properties: {
+        clienteID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al cliente" },
+        empleadoID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al empleado" },
+        servicio: { bsonType: "string", description: "Debe ser un string que describe el servicio" },
+        fechaHora: { bsonType: "date", description: "Debe ser una fecha válida y es requerida" },
+        estado: { enum: ["pendiente", "completada", "cancelada"], description: "Debe ser un estado válido" }
+      }
+    }
+  }
+});
+
+// 6. Actualizar la colección 'services'
+db.runCommand({
+  collMod: "services",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "category", "price"],
+      properties: {
+        name: {
+          bsonType: "string",
+          description: "Debe ser un string con el nombre del servicio"
+        },
+        category: {
+          bsonType: "string",
+          description: "Debe ser un string con la categoría"
+        },
+        price: {
+          bsonType: "int",
+          description: "Debe ser un número entero representando el precio"
+        }
+      }
+    }
+  },
+  validationLevel: "strict",
+  validationAction: "error"
+});
+
+// 7. Actualizar la colección 'encuestas'
+db.runCommand({
+  collMod: "encuestas",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["clienteID", "pregunta", "respuesta", "fechaRespuesta"],
+      properties: {
+        clienteID: { bsonType: "objectId", description: "Debe ser un ObjectId válido" },
+        pregunta: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        respuesta: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        fechaRespuesta: { bsonType: "date", description: "Debe ser una fecha válida y es requerido" }
+      }
+    }
+  }
+});
+
+// 8. Actualizar la colección 'historials'
+db.runCommand({
+  collMod: "historials",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["usuarioID", "accion", "fechaAccion"],
+      properties: {
+        usuarioID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al usuario" },
+        accion: { bsonType: "string", description: "Debe ser un string que describe la acción" },
+        fechaAccion: { bsonType: "date", description: "Debe ser una fecha válida y es requerida" }
+      }
+    }
+  }
+});
+
+// 9. Actualizar la colección 'inventarios'
+db.runCommand({
+  collMod: "inventarios",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["producto", "cantidad", "precioUnidad", "proveedor", "creadoEn"],
+      properties: {
+        producto: { bsonType: "string", description: "Debe ser un string y es requerido" },
+        cantidad: { bsonType: "int", description: "Debe ser un entero y es requerido" },
+        precioUnidad: { bsonType: "int", description: "Debe ser un entero que representa el precio por unidad" },
+        proveedor: { bsonType: "string", description: "Debe ser un string con el nombre del proveedor" },
+        creadoEn: { bsonType: "date", description: "Debe ser una fecha válida de creación" }
+      }
+    }
+  },
+  validationLevel: "strict",
+  validationAction: "error"
+});
+
+// 10. Actualizar la colección 'pagos'
+db.runCommand({
+  collMod: "pagos",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["clienteID", "monto", "metodoPago", "fechaPago"],
+      properties: {
+        clienteID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al cliente" },
+        monto: { bsonType: "double", description: "Debe ser un número representando el monto pagado" },
+        metodoPago: { enum: ["tarjeta", "efectivo", "transferencia"], description: "Debe ser uno de los métodos permitidos" },
+        fechaPago: { bsonType: "date", description: "Debe ser una fecha válida del pago" }
+      }
+    }
+  }
+});
+
+// 11. Actualizar la colección 'promocions'
+db.runCommand({
+  collMod: "promocions",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["titulo", "descripcion", "descuento", "fechaInicio", "fechaFin"],
+      properties: {
+        titulo: { bsonType: "string", description: "Debe ser un string con el título de la promoción" },
+        descripcion: { bsonType: "string", description: "Debe ser un string con la descripción" },
+        descuento: { bsonType: "double", description: "Debe ser un número indicando el porcentaje de descuento" },
+        fechaInicio: { bsonType: "date", description: "Debe ser una fecha válida de inicio" },
+        fechaFin: { bsonType: "date", description: "Debe ser una fecha válida de fin" }
+      }
+    }
+  }
+});
+
+// 12. Actualizar la colección 'suscripcions'
+db.runCommand({
+  collMod: "suscripcions",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["clienteID", "tipoSuscripcion", "fechaInicio", "fechaFin"],
+      properties: {
+        clienteID: { bsonType: "objectId", description: "Debe ser un ObjectId válido que identifica al cliente" },
+        tipoSuscripcion: { bsonType: "string", description: "Debe ser un string que describe el tipo de suscripción" },
+        fechaInicio: { bsonType: "date", description: "Debe ser una fecha válida de inicio" },
+        fechaFin: { bsonType: "date", description: "Debe ser una fecha válida de fin" }
+      }
+    }
+  }
+});
+
+//Verificar coleciones y su configuración 
+db.getCollectionInfos()
+
+// Inserts
+
+// 1. Clientes
+
+[
+  {
+    _id: ObjectId('675652c5423ae370167d6e58'),
+    nombre: 'Juan Pérez',
+    correo: 'juan.perez@gmail.com',
+    telefono: '123456789',
+    rol: 'cliente',
+    password: 'password123',
+    creadoEn: ISODate('2024-12-01T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e59'),
+    nombre: 'María López',
+    correo: 'maria.lopez@gmail.com',
+    telefono: '987654321',
+    rol: 'cliente',
+    password: 'securepass',
+    creadoEn: ISODate('2024-12-02T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e5a'),
+    nombre: 'Carlos Hernández',
+    correo: 'carlos.hernandez@gmail.com',
+    telefono: '456789123',
+    rol: 'cliente',
+    password: 'carlospass',
+    creadoEn: ISODate('2024-12-03T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e5b'),
+    nombre: 'Laura Martínez',
+    correo: 'laura.martinez@gmail.com',
+    telefono: '789123456',
+    rol: 'cliente',
+    password: 'laurasecure',
+    creadoEn: ISODate('2024-12-04T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e5c'),
+    nombre: 'Luis Fernández',
+    correo: 'luis.fernandez@gmail.com',
+    telefono: '321654987',
+    rol: 'cliente',
+    password: 'luispassword',
+    creadoEn: ISODate('2024-12-05T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e5d'),
+    nombre: 'Ana Rodríguez',
+    correo: 'ana.rodriguez@gmail.com',
+    telefono: '654987321',
+    rol: 'cliente',
+    password: 'anapass',
+    creadoEn: ISODate('2024-12-06T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e5e'),
+    nombre: 'Pedro Ramírez',
+    correo: 'pedro.ramirez@gmail.com',
+    telefono: '147258369',
+    rol: 'cliente',
+    password: 'pedropass',
+    creadoEn: ISODate('2024-12-07T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e5f'),
+    nombre: 'Sofía Torres',
+    correo: 'sofia.torres@gmail.com',
+    telefono: '963852741',
+    rol: 'cliente',
+    password: 'sofiasecure',
+    creadoEn: ISODate('2024-12-08T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e60'),
+    nombre: 'Miguel Gutiérrez',
+    correo: 'miguel.gutierrez@gmail.com',
+    telefono: '258369147',
+    rol: 'cliente',
+    password: 'miguelpass',
+    creadoEn: ISODate('2024-12-09T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675652c5423ae370167d6e61'),
+    nombre: 'Elena García',
+    correo: 'elena.garcia@gmail.com',
+    telefono: '852741963',
+    rol: 'cliente',
+    password: 'elenasecure',
+    creadoEn: ISODate('2024-12-10T00:00:00.000Z')
+  }
+]
+
+// 2. Empleados
+
+[
+  {
+    _id: ObjectId('675653d5423ae370167d6e62'),
+    nombre: 'Andrés Vargas',
+    correo: 'andres.vargas@gmail.com',
+    telefono: '123456789',
+    rol: 'empleado',
+    puesto: 'Barbero',
+    password: 'andres123',
+    creadoEn: ISODate('2024-12-01T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e63'),
+    nombre: 'Diana Castro',
+    correo: 'diana.castro@gmail.com',
+    telefono: '987654321',
+    rol: 'empleado',
+    puesto: 'Recepcionista',
+    password: 'diana123',
+    creadoEn: ISODate('2024-12-02T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e64'),
+    nombre: 'Jorge Ramírez',
+    correo: 'jorge.ramirez@gmail.com',
+    telefono: '456789123',
+    rol: 'empleado',
+    puesto: 'Barbero',
+    password: 'jorge123',
+    creadoEn: ISODate('2024-12-03T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e65'),
+    nombre: 'Lucía Gómez',
+    correo: 'lucia.gomez@gmail.com',
+    telefono: '789123456',
+    rol: 'empleado',
+    puesto: 'Estilista',
+    password: 'lucia123',
+    creadoEn: ISODate('2024-12-04T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e66'),
+    nombre: 'Martín López',
+    correo: 'martin.lopez@gmail.com',
+    telefono: '321654987',
+    rol: 'empleado',
+    puesto: 'Encargado de inventario',
+    password: 'martin123',
+    creadoEn: ISODate('2024-12-05T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e67'),
+    nombre: 'Camila Rojas',
+    correo: 'camila.rojas@gmail.com',
+    telefono: '654987321',
+    rol: 'empleado',
+    puesto: 'Barbera',
+    password: 'camila123',
+    creadoEn: ISODate('2024-12-06T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e68'),
+    nombre: 'Ricardo Pérez',
+    correo: 'ricardo.perez@gmail.com',
+    telefono: '147258369',
+    rol: 'empleado',
+    puesto: 'Cajero',
+    password: 'ricardo123',
+    creadoEn: ISODate('2024-12-07T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e69'),
+    nombre: 'Gabriela Fernández',
+    correo: 'gabriela.fernandez@gmail.com',
+    telefono: '963852741',
+    rol: 'empleado',
+    puesto: 'Estilista',
+    password: 'gabriela123',
+    creadoEn: ISODate('2024-12-08T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e6a'),
+    nombre: 'Diego Torres',
+    correo: 'diego.torres@gmail.com',
+    telefono: '258369147',
+    rol: 'empleado',
+    puesto: 'Limpieza',
+    password: 'diego123',
+    creadoEn: ISODate('2024-12-09T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675653d5423ae370167d6e6b'),
+    nombre: 'Sofía Castillo',
+    correo: 'sofia.castillo@gmail.com',
+    telefono: '852741963',
+    rol: 'empleado',
+    puesto: 'Recepcionista',
+    password: 'sofia123',
+    creadoEn: ISODate('2024-12-10T00:00:00.000Z')
+  }
+]
+
+// 3. Encuentas
+
+[
+  {
+    _id: ObjectId('675654d5423ae370167d6e6c'),
+    preguntas: [
+      '¿Cuánto cuesta el corte de cabello?',
+      '¿Qué productos utilizan para el cuidado del cabello?',
+      '¿Cuáles son los horarios de atención?',
+      '¿Ofrecen servicios para niños?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e6d'),
+    preguntas: [
+      '¿Tienen promociones o descuentos?',
+      '¿Qué tan larga suele ser la espera?',
+      '¿Es necesario agendar una cita?',
+      '¿Ofrecen servicios de barba y afeitado?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e6e'),
+    preguntas: [
+      '¿Qué productos recomiendan para mantener el cabello saludable?',
+      '¿Hay un barbero en específico que recomienden?',
+      '¿Ofrecen cortes personalizados?',
+      '¿Tienen estacionamiento disponible?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e6f'),
+    preguntas: [
+      '¿Qué marcas de productos utilizan?',
+      '¿Los barberos tienen certificación?',
+      '¿Qué métodos de pago aceptan?',
+      '¿Hay servicios exclusivos para eventos especiales?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e70'),
+    preguntas: [
+      '¿Cuánto tiempo toma un corte de cabello promedio?',
+      '¿Ofrecen servicios para mujeres?',
+      '¿Cuál es la política de cancelación de citas?',
+      '¿Tienen paquetes para clientes frecuentes?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e71'),
+    preguntas: [
+      '¿Ofrecen servicios de tintura o coloración?',
+      '¿Qué tan seguido recomiendan un corte de cabello?',
+      '¿Tienen servicios para bodas o eventos?',
+      '¿Qué opinan otros clientes de sus servicios?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e72'),
+    preguntas: [
+      '¿Tienen opciones de cortes clásicos y modernos?',
+      '¿Pueden atenderme sin cita previa?',
+      '¿Tienen servicios de spa capilar?',
+      '¿Qué diferencia sus servicios de otras barberías?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e73'),
+    preguntas: [
+      '¿Cuánto tiempo lleva operando la barbería?',
+      '¿Qué servicios incluyen en un corte de cabello?',
+      '¿Utilizan productos naturales?',
+      '¿Cuentan con servicios para el cuidado de la barba?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e74'),
+    preguntas: [
+      '¿Qué opciones de peinado ofrecen?',
+      '¿Tienen servicios para cabello rizado?',
+      '¿Cuál es la experiencia de los barberos?',
+      '¿Qué tipo de maquinaria utilizan para cortes?'
+    ]
+  },
+  {
+    _id: ObjectId('675654d5423ae370167d6e75'),
+    preguntas: [
+      '¿Ofrecen servicio a domicilio?',
+      '¿Qué incluye el servicio de afeitado?',
+      '¿Tienen cortes especiales para niños?',
+      '¿Qué tan seguros son los productos que utilizan?'
+    ]
+  }
+]
+
+// 4. Feedbacks
+
+[
+  {
+    _id: ObjectId('675655d5423ae370167d6e76'),
+    clienteID: ObjectId('675652c5423ae370167d6e58'),
+    empleadoID: ObjectId('675653d5423ae370167d6e62'),
+    servicio: 'Corte de cabello',
+    calificacion: 5,
+    comentario: 'Excelente atención y corte perfecto.',
+    fecha: ISODate('2024-12-01T10:30:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e77'),
+    clienteID: ObjectId('675652c5423ae370167d6e59'),
+    empleadoID: ObjectId('675653d5423ae370167d6e63'),
+    servicio: 'Afeitado',
+    calificacion: 4,
+    comentario: 'Buen servicio, pero la espera fue algo larga.',
+    fecha: ISODate('2024-12-02T14:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e78'),
+    clienteID: ObjectId('675652c5423ae370167d6e5a'),
+    empleadoID: ObjectId('675653d5423ae370167d6e64'),
+    servicio: 'Corte de barba',
+    calificacion: 5,
+    comentario: 'Muy profesional y rápido.',
+    fecha: ISODate('2024-12-03T16:45:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e79'),
+    clienteID: ObjectId('675652c5423ae370167d6e5b'),
+    empleadoID: ObjectId('675653d5423ae370167d6e65'),
+    servicio: 'Lavado y corte de cabello',
+    calificacion: 3,
+    comentario: 'El lavado estuvo bien, pero el corte no fue lo esperado.',
+    fecha: ISODate('2024-12-04T11:15:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e7a'),
+    clienteID: ObjectId('675652c5423ae370167d6e5c'),
+    empleadoID: ObjectId('675653d5423ae370167d6e66'),
+    servicio: 'Corte y arreglo de barba',
+    calificacion: 5,
+    comentario: 'Un servicio completo y excelente.',
+    fecha: ISODate('2024-12-05T13:30:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e7b'),
+    clienteID: ObjectId('675652c5423ae370167d6e5d'),
+    empleadoID: ObjectId('675653d5423ae370167d6e67'),
+    servicio: 'Corte de cabello',
+    calificacion: 4,
+    comentario: 'Corte bien realizado, aunque tardó más de lo esperado.',
+    fecha: ISODate('2024-12-06T09:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e7c'),
+    clienteID: ObjectId('675652c5423ae370167d6e5e'),
+    empleadoID: ObjectId('675653d5423ae370167d6e68'),
+    servicio: 'Afeitado completo',
+    calificacion: 5,
+    comentario: 'El afeitado fue perfecto, muy suave.',
+    fecha: ISODate('2024-12-07T18:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e7d'),
+    clienteID: ObjectId('675652c5423ae370167d6e5f'),
+    empleadoID: ObjectId('675653d5423ae370167d6e69'),
+    servicio: 'Corte moderno',
+    calificacion: 4,
+    comentario: 'El corte fue bueno, pero esperaba un poco más de estilo.',
+    fecha: ISODate('2024-12-08T15:30:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e7e'),
+    clienteID: ObjectId('675652c5423ae370167d6e60'),
+    empleadoID: ObjectId('675653d5423ae370167d6e6a'),
+    servicio: 'Arreglo de barba',
+    calificacion: 3,
+    comentario: 'Podría mejorar en los detalles del corte.',
+    fecha: ISODate('2024-12-09T12:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675655d5423ae370167d6e7f'),
+    clienteID: ObjectId('675652c5423ae370167d6e61'),
+    empleadoID: ObjectId('675653d5423ae370167d6e6b'),
+    servicio: 'Corte y lavado',
+    calificacion: 5,
+    comentario: 'Me encantó el servicio, volveré pronto.',
+    fecha: ISODate('2024-12-10T17:00:00.000Z')
+  }
+]
+
+// 5. Inventarios
+
+[
+  {
+    _id: ObjectId('675651ef423ae370167d6e1e'),
+    producto: 'Tijeras',
+    cantidad: 15,
+    precioUnidad: 25,
+    proveedor: 'Herramientas Barber Pro'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e1f'),
+    producto: 'Navajas',
+    cantidad: 50,
+    precioUnidad: 5,
+    proveedor: 'Corte Fino'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e20'),
+    producto: 'Peines',
+    cantidad: 100,
+    precioUnidad: 2,
+    proveedor: 'Accesorios Barber'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e21'),
+    producto: 'Máquina de cortar cabello',
+    cantidad: 10,
+    precioUnidad: 120,
+    proveedor: 'Barber Tech'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e22'),
+    producto: 'Gel para cabello',
+    cantidad: 80,
+    precioUnidad: 6.5,
+    proveedor: 'Estilo Gel'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e23'),
+    producto: 'Cera para cabello',
+    cantidad: 60,
+    precioUnidad: 8,
+    proveedor: 'Estilo Gel'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e24'),
+    producto: 'Capas de corte',
+    cantidad: 20,
+    precioUnidad: 15,
+    proveedor: 'Textiles Barber'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e25'),
+    producto: 'Toallas',
+    cantidad: 200,
+    precioUnidad: 3,
+    proveedor: 'Limpieza Pro'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e26'),
+    producto: 'Espuma de afeitar',
+    cantidad: 90,
+    precioUnidad: 4.5,
+    proveedor: 'Corte Fino'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e27'),
+    producto: 'Alcohol',
+    cantidad: 50,
+    precioUnidad: 2.5,
+    proveedor: 'Limpieza Pro'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e28'),
+    producto: 'Spray para fijación',
+    cantidad: 70,
+    precioUnidad: 9,
+    proveedor: 'Estilo Gel'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e29'),
+    producto: 'Cepillos para cabello',
+    cantidad: 40,
+    precioUnidad: 7,
+    proveedor: 'Accesorios Barber'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e2a'),
+    producto: 'Cera para bigote',
+    cantidad: 30,
+    precioUnidad: 10,
+    proveedor: 'Barber Deluxe'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e2b'),
+    producto: 'Aceite para barba',
+    cantidad: 50,
+    precioUnidad: 15,
+    proveedor: 'Barber Deluxe'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e2c'),
+    producto: 'Batas para clientes',
+    cantidad: 10,
+    precioUnidad: 20,
+    proveedor: 'Textiles Barber'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e2d'),
+    producto: 'Clips de cabello',
+    cantidad: 150,
+    precioUnidad: 1.5,
+    proveedor: 'Accesorios Barber'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e2e'),
+    producto: 'Cortina de protección',
+    cantidad: 5,
+    precioUnidad: 50,
+    proveedor: 'Barber Tech'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e2f'),
+    producto: 'Cuchillas para navajas',
+    cantidad: 500,
+    precioUnidad: 0.5,
+    proveedor: 'Corte Fino'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e30'),
+    producto: 'Crema para afeitar',
+    cantidad: 70,
+    precioUnidad: 6,
+    proveedor: 'Barber Deluxe'
+  },
+  {
+    _id: ObjectId('675651ef423ae370167d6e31'),
+    producto: 'Champú',
+    cantidad: 120,
+    precioUnidad: 5.5,
+    proveedor: 'Estilo Gel'
+  }
+]
+
+// 6. Notifications
+
+[
+  {
+    _id: ObjectId('675657d5423ae370167d6e90'),
+    clienteID: ObjectId('675652c5423ae370167d6e58'),
+    mensaje: 'Recuerda tu cita programada para el 2024-12-15 a las 10:00 AM.',
+    fechaEnvio: ISODate('2024-12-14T09:00:00.000Z'),
+    tipo: 'recordatorio',
+    leido: false
+  },
+  {
+    _id: ObjectId('675657d5423ae370167d6e91'),
+    clienteID: ObjectId('675652c5423ae370167d6e59'),
+    mensaje: 'Tu cita ha sido confirmada exitosamente.',
+    fechaEnvio: ISODate('2024-12-01T15:00:00.000Z'),
+    tipo: 'información',
+    leido: true
+  },
+  {
+    _id: ObjectId('675657d5423ae370167d6e92'),
+    clienteID: ObjectId('675652c5423ae370167d6e5a'),
+    mensaje: 'Tu cita ha sido cancelada. Por favor, reprograma si es necesario.',
+    fechaEnvio: ISODate('2024-12-02T12:00:00.000Z'),
+    tipo: 'alerta',
+    leido: false
+  },
+  {
+    _id: ObjectId('675657d5423ae370167d6e93'),
+    clienteID: ObjectId('675652c5423ae370167d6e5b'),
+    mensaje: 'Tenemos una promoción especial para clientes frecuentes. ¡No te la pierdas!',
+    fechaEnvio: ISODate('2024-12-05T10:30:00.000Z'),
+    tipo: 'información',
+    leido: true
+  },
+  {
+    _id: ObjectId('675657d5423ae370167d6e94'),
+    clienteID: ObjectId('675652c5423ae370167d6e5c'),
+    mensaje: 'Recuerda tu cita programada para el 2024-12-20 a las 4:00 PM.',
+    fechaEnvio: ISODate('2024-12-19T08:00:00.000Z'),
+    tipo: 'recordatorio',
+    leido: false
+  }
+]
+
+// 7. Pagos
+
+[
+  {
+    _id: ObjectId('675658d5423ae370167d6ea0'),
+    clienteID: ObjectId('675652c5423ae370167d6e58'),
+    monto: 150,
+    metodo: 'Tarjeta de crédito',
+    fecha: ISODate('2024-12-01T10:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675658d5423ae370167d6ea1'),
+    clienteID: ObjectId('675652c5423ae370167d6e59'),
+    monto: 100,
+    metodo: 'Efectivo',
+    fecha: ISODate('2024-12-02T14:30:00.000Z')
+  },
+  {
+    _id: ObjectId('675658d5423ae370167d6ea2'),
+    clienteID: ObjectId('675652c5423ae370167d6e5a'),
+    monto: 200,
+    metodo: 'Tarjeta de débito',
+    fecha: ISODate('2024-12-03T16:00:00.000Z')
+  },
+  {
+    _id: ObjectId('675658d5423ae370167d6ea3'),
+    clienteID: ObjectId('675652c5423ae370167d6e5b'),
+    monto: 180,
+    metodo: 'Transferencia bancaria',
+    fecha: ISODate('2024-12-04T11:45:00.000Z')
+  },
+  {
+    _id: ObjectId('675658d5423ae370167d6ea4'),
+    clienteID: ObjectId('675652c5423ae370167d6e5c'),
+    monto: 120,
+    metodo: 'Efectivo',
+    fecha: ISODate('2024-12-05T09:30:00.000Z')
+  }
+]
+
+// 8. Promocions
+
+[
+  {
+    _id: ObjectId('675659d5423ae370167d6eb0'),
+    nombre: 'Descuento Navideño',
+    descripcion: '20% de descuento en cortes de cabello durante toda la temporada navideña.',
+    validoDesde: ISODate('2024-12-01T00:00:00.000Z'),
+    validoHasta: ISODate('2024-12-31T23:59:59.000Z')
+  },
+  {
+    _id: ObjectId('675659d5423ae370167d6eb1'),
+    nombre: 'Paquete Especial de Año Nuevo',
+    descripcion: 'Corte de cabello y arreglo de barba por un precio especial.',
+    validoDesde: ISODate('2024-12-26T00:00:00.000Z'),
+    validoHasta: ISODate('2025-01-02T23:59:59.000Z')
+  }
+]
+
+// 9. Services
+
+[
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec0'),
+    name: 'Corte de cabello clásico',
+    category: 'Corte de cabello',
+    price: 150
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec1'),
+    name: 'Corte de cabello moderno',
+    category: 'Corte de cabello',
+    price: 180
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec2'),
+    name: 'Afeitado clásico',
+    category: 'Afeitado',
+    price: 100
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec3'),
+    name: 'Arreglo de barba',
+    category: 'Afeitado',
+    price: 120
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec4'),
+    name: 'Lavado y masaje capilar',
+    category: 'Cuidado del cabello',
+    price: 200
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec5'),
+    name: 'Corte infantil',
+    category: 'Corte de cabello',
+    price: 100
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec6'),
+    name: 'Tinte capilar',
+    category: 'Cuidado del cabello',
+    price: 300
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec7'),
+    name: 'Tratamiento capilar',
+    category: 'Cuidado del cabello',
+    price: 250
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec8'),
+    name: 'Paquete corte y afeitado',
+    category: 'Paquete',
+    price: 250
+  },
+  {
+    _id: ObjectId('67565ad5423ae370167d6ec9'),
+    name: 'Corte y arreglo de barba premium',
+    category: 'Paquete',
+    price: 300
+  }
+]
+
+// 10. Suscripcions
+
+[
+  {
+    _id: ObjectId('67565bd5423ae370167d6ed0'),
+    clienteID: ObjectId('675652c5423ae370167d6e58'),
+    tipo: 'Mensual',
+    costo: 50,
+    fechaInicio: ISODate('2024-12-01T00:00:00.000Z'),
+    fechaFin: ISODate('2024-12-31T23:59:59.000Z')
+  },
+  {
+    _id: ObjectId('67565bd5423ae370167d6ed1'),
+    clienteID: ObjectId('675652c5423ae370167d6e59'),
+    tipo: 'Anual',
+    costo: 500,
+    fechaInicio: ISODate('2024-01-01T00:00:00.000Z'),
+    fechaFin: ISODate('2024-12-31T23:59:59.000Z')
+  },
+  {
+    _id: ObjectId('67565bd5423ae370167d6ed2'),
+    clienteID: ObjectId('675652c5423ae370167d6e5a'),
+    tipo: 'Mensual',
+    costo: 50,
+    fechaInicio: ISODate('2024-11-15T00:00:00.000Z'),
+    fechaFin: ISODate('2024-12-14T23:59:59.000Z')
+  },
+  {
+    _id: ObjectId('67565bd5423ae370167d6ed3'),
+    clienteID: ObjectId('675652c5423ae370167d6e5b'),
+    tipo: 'Anual',
+    costo: 480,
+    fechaInicio: ISODate('2024-02-01T00:00:00.000Z'),
+    fechaFin: ISODate('2025-01-31T23:59:59.000Z')
+  },
+  {
+    _id: ObjectId('67565bd5423ae370167d6ed4'),
+    clienteID: ObjectId('675652c5423ae370167d6e5c'),
+    tipo: 'Mensual',
+    costo: 55,
+    fechaInicio: ISODate('2024-12-05T00:00:00.000Z'),
+    fechaFin: ISODate('2025-01-04T23:59:59.000Z')
+  }
+] 
